@@ -26,7 +26,9 @@
                                 class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="{{ route("parent.index") }}">Parent List</a></li>
-                            <li><a href="{{ route("parent.create") }}">Parent Add</a></li>
+                            @can('viewAny', Auth::user())
+                                <li><a href="{{ route("parent.create") }}">Parent Add</a></li>
+                            @endcan
                         </ul>
                     </li>
                     <li class="submenu">
@@ -34,42 +36,48 @@
                                 class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="{{ route("student.index") }}">Student List</a></li>
-                            <li><a href="{{ route("student.create") }}">Student Add</a></li>
+                            @can('viewAny', Auth::user())
+                                <li><a href="{{ route("student.create") }}">Student Add</a></li>
+                            @endcan
                         </ul>
                     </li>
                 @endcan
 
-                @can('viewAny', Auth::user())
+                @can('view', Auth::user())
                     <li class="submenu">
                         <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Teachers</span> <span
                                 class="menu-arrow"></span></a>
                         <ul>
-                            <li><a href="teachers.html">Teacher List</a></li>
-                            <li><a href="teacher-details.html">Teacher View</a></li>
-                            <li><a href="add-teacher.html">Teacher Add</a></li>
-                            <li><a href="edit-teacher.html">Teacher Edit</a></li>
+                            <li><a href="{{ route("teacher.index") }}">Teacher List</a></li>
+                            @can('viewAny', Auth::user())
+                                <li><a href="{{ route("teacher.create") }}">Teacher Add</a></li>
+                            @endcan
                         </ul>
                     </li>
                 @endcan
 
-                <li class="submenu">
-                    <a href="#"><i class="fas fa-building"></i> <span> Departments</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="departments.html">Department List</a></li>
-                        <li><a href="add-department.html">Department Add</a></li>
-                        <li><a href="edit-department.html">Department Edit</a></li>
-                    </ul>
-                </li>
-                <li class="submenu">
-                    <a href="#"><i class="fas fa-book-reader"></i> <span> Subjects</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="subjects.html">Subject List</a></li>
-                        <li><a href="add-subject.html">Subject Add</a></li>
-                        <li><a href="edit-subject.html">Subject Edit</a></li>
-                    </ul>
-                </li>
+                @can('view', Auth::user())
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-book-reader"></i> <span> Subjects</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="{{ route("subject.index") }}">Subject List</a></li>
+                            <li><a href="{{ route("subject.create") }}">Subject Add</a></li>
+                        </ul>
+                    </li>
+                @endcan
+
+                @can('view', Auth::user())
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-building"></i> <span> Courses</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="{{ route("course.index") }}">Courses List</a></li>
+                            <li><a href="{{ route("course.create") }}">Courses Add</a></li>
+                        </ul>
+                    </li>
+                @endcan
+
                 <li class="submenu">
                     <a href="#"><i class="fas fa-clipboard"></i> <span> Invoices</span> <span
                             class="menu-arrow"></span></a>

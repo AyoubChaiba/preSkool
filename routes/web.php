@@ -1,11 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CoursesController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ParentsController;
 use App\Http\Controllers\StudentsController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SubjectsController;
+use App\Http\Controllers\TeachersController;
+use Illuminate\Support\Facades\Route;
+
+
+
 
 
 /*
@@ -48,12 +54,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['role:teacher,admin'])->group(function () {
         Route::get('/teacher/dashboard', [DashboardController::class , "TeacherDashboard"])->name('teacher.dashboard');
-        Route::resource('/student', StudentsController::class);
+        Route::resource('/teacher', TeachersController::class);
+        Route::resource('/subject', SubjectsController::class);
+        Route::resource('/course', CoursesController::class);
     });
 
     Route::middleware(['role:parent,admin'])->group(function () {
         Route::resource('/parent', ParentsController::class);
     });
+
 
 });
 
