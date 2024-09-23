@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Parents;
 use App\Events\UserCreated;
 use App\Events\UserUpdated;
 use Illuminate\Support\Str;
@@ -11,16 +10,18 @@ use Illuminate\Http\Request;
 use Flasher\Laravel\Facade\Flasher;
 use Illuminate\Support\Facades\Validator;
 
-class ParentsController extends Controller
+class AdminController extends Controller
 {
-    public function index() {
-        $parents = Parents::with('user')->get();
-        return view('pages.parents.list', compact('parents'));
+    public function index()
+    {
+        $admins = User::where('role', 'admin')->get();
+        return view('pages.admin.list', compact('admins'));
     }
+
 
     public function create()
     {
-        return view('pages.parents.create');
+        return view('pages.admin.create');
     }
 
     public function store(Request $request)
@@ -28,6 +29,7 @@ class ParentsController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8'],
         ]);
 
         if ($validator->fails()) {
@@ -41,49 +43,42 @@ class ParentsController extends Controller
             ], 400);
         }
 
-        $password = Str::random(10);
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($password),
-            'role' => 'parent',
+            'password' => bcrypt($request->password),
+            'role' => 'admin',
         ]);
 
-        if ($user->role === 'parent') {
-            Parents::create([
-                'user_id' => $user->id,
-            ]);
-        }
-
-        event(new UserCreated($user, $password, $user->role));
+        event(new UserCreated($user, $request->password, $user->role));
 
         Flasher::addSuccess($user->name . ' has been created successfully! Role: ' . $user->role);
 
         return response()->json([
             'success' => true,
-            'redirect_url' => route('parent.index')
+            'redirect_url' => route('admin.index')
         ], 201);
     }
 
+
+
     public function show($id)
     {
-        $parent = Parents::with('user')->get();
-        return view('pages.parents.show', compact('parent'));
+        $admin = User::findOrFail($id);
+        return view('pages.admin.show', compact('admin'));
     }
 
 
     public function edit($id)
     {
-        $parent = Parents::with('user')->findOrFail($id);
+        $admin = User::findOrFail($id);
 
-        return view('pages.parents.edit', compact('parent'));
+        return view('pages.admin.edit', compact('admin'));
     }
 
     public function update(Request $request, $id)
     {
-        $parent = Parents::findOrFail($id);
-        $user = $parent->user;
+        $user = User::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
@@ -105,6 +100,7 @@ class ParentsController extends Controller
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'role' => 'admin',
         ]);
 
         if ($request->filled('password')) {
@@ -118,22 +114,21 @@ class ParentsController extends Controller
 
         return response()->json([
             'success' => true,
-            'redirect_url' => route('parent.index')
+            'redirect_url' => route('admin.index')
         ], 200);
     }
+
+
 
     public function destroy($id)
     {
-        $parent = Parents::findOrFail($id);
+        $user = User::findOrFail($id);
 
-        $parent->user()->delete();
-
-        $parent->delete();
+        $user->delete();
 
         return response()->json([
             'success' => true,
-            'redirect_url' => route('parent.index'),
+            'redirect_url' => route('user.index'),
         ], 200);
     }
-
 }

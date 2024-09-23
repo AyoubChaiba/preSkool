@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <title>@yield("title")</title>
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <link rel="shortcut icon" href="{{ asset('assets/img/favicon.png')}}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('assets/plugins/bootstrap/css/bootstrap.min.css')}}">
@@ -17,12 +19,14 @@
     @yield("style")
 
     <link rel="stylesheet" href="{{asset('assets/css/style.css') }}">
+
 </head>
 
 <body>
 
-    <div class="main-wrapper">
+    {!! Flasher::render() !!}
 
+    <div class="main-wrapper">
         @include("partiels.header")
 
         @include("partiels.sidebar")
@@ -33,12 +37,21 @@
         </div>
     </div>
 
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+
     <script src="{{asset("assets/js/jquery-3.6.0.min.js")}}"></script>
     <script src="{{asset("assets/plugins/bootstrap/js/bootstrap.bundle.min.js")}}"></script>
     <script src="{{asset("assets/js/feather.min.js")}}"></script>
     <script src="{{asset("assets/plugins/slimscroll/jquery.slimscroll.min.js")}}"></script>
         @yield('js-content')
     <script src="{{asset("assets/js/script.js")}}"></script>
+    <script src="{{ asset('assets/plugins/toastr/toastr.min.js') }}"></script>
 </body>
 
 </html>
