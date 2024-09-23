@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ParentsController;
+use App\Http\Controllers\StudentsController;
+use App\Http\Controllers\DashboardController;
 
 
 /*
@@ -17,29 +19,42 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-Route::view('/login', 'pages/auth/login')->name('view.login');
 Route::view('/register', 'pages/auth/register')->name('view.register');
-Route::view('/forgotPassword', 'pages/auth/forgotPassword')->name('view.forgotPassword');
-
-Route::post('/login', [AuthController::class,'login'])->name('auth.login');
 Route::post('/register', [AuthController::class,'register'])->name('auth.register');
+
+Route::prefix('error')->group(function () {
+    Route::view('/403', 'errors.403')->name('error.403');
+    Route::view('/404', 'errors.404')->name('error.404');
+    Route::view('/500', 'errors.500')->name('error.500');
+});
+
+Route::view('/', 'pages/auth/login')->name('view.login');
+Route::view('/forgotPassword', 'pages/auth/forgotPassword')->name('view.forgotPassword');
+Route::post('/login', [AuthController::class,'login'])->name('auth.login');
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
-});
 
-Route::middleware(['role:admin'])->group(function () {
-    Route::prefix('admin')->group(function () {
-        Route::get('/dashboard', [DashboardController::class , "AdminDashboard"])->name('admin.dashboard');
-        Route::resource('/user', UserController::class);
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/admin/dashboard', [DashboardController::class , "AdminDashboard"])->name('admin.dashboard');
+        Route::resource('/admin', AdminController::class);
     });
+
+    Route::middleware(['role:student,admin'])->group(function () {
+        Route::get('/student/dashboard', [DashboardController::class , "StudentDashboard"])->name('student.dashboard');
+        Route::resource('/student', StudentsController::class);
+    });
+
+    Route::middleware(['role:teacher,admin'])->group(function () {
+        Route::get('/teacher/dashboard', [DashboardController::class , "TeacherDashboard"])->name('teacher.dashboard');
+        Route::resource('/student', StudentsController::class);
+    });
+
+    Route::middleware(['role:parent,admin'])->group(function () {
+        Route::resource('/parent', ParentsController::class);
+    });
+
 });
 
-Route::middleware(['role:student'])->group(function () {
-    Route::get('/student/dashboard', [DashboardController::class , "StudentDashboard"])->name('student.dashboard');
-});
 
-Route::middleware(['role:teacher'])->group(function () {
-    Route::get('/teacher/dashboard', [DashboardController::class , "TeacherDashboard"])->name('teacher.dashboard');
-});

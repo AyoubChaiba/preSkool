@@ -15,12 +15,12 @@ class RoleMiddleware
      * @param  string  $role
      * @return mixed
      */
-    public function handle($request, Closure $next, $role)
+    public function handle($request, Closure $next, ...$roles)
     {
-        if (Auth::check() && Auth::user()->role === $role) {
+        if (Auth::check() && in_array(Auth::user()->role, $roles)) {
             return $next($request);
         }
 
-        return response()->json(['message' => 'Unauthorized.'], 403);
+        return redirect()->route("error.403");
     }
 }

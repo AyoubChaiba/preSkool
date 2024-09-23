@@ -9,5 +9,14 @@ class Students extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'admission_date',
+        'parent_id',
+    ];
+
+    public function profile() {
+        return $this->belongsTo(user::class, 'user_id');
+    }
 
 }

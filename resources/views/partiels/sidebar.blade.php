@@ -8,34 +8,50 @@
                 <li class="submenu active">
                     <a href="{{ route(Auth::user()->role . ".dashboard")}}"><i class="feather-grid"></i> <span> Dashboard</span></a>
                 </li>
-                <li class="submenu">
-                    <a href="#"><i class="fas fa-user"></i> <span> User</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="{{route("user.index")}}">User List</a></li>
-                        <li><a href="{{route("user.create")}}">User Add</a></li>
-                    </ul>
-                </li>
-                <li class="submenu">
-                    <a href="#"><i class="fas fa-graduation-cap"></i> <span> Students</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="students.html">Student List</a></li>
-                        <li><a href="student-details.html">Student View</a></li>
-                        <li><a href="add-student.html">Student Add</a></li>
-                        <li><a href="edit-student.html">Student Edit</a></li>
-                    </ul>
-                </li>
-                <li class="submenu">
-                    <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Teachers</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="teachers.html">Teacher List</a></li>
-                        <li><a href="teacher-details.html">Teacher View</a></li>
-                        <li><a href="add-teacher.html">Teacher Add</a></li>
-                        <li><a href="edit-teacher.html">Teacher Edit</a></li>
-                    </ul>
-                </li>
+
+                @can('viewAny', Auth::user())
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-user-secret"></i> <span> Admin</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="{{route("admin.index")}}">Admin List</a></li>
+                            <li><a href="{{route("admin.create")}}">Admin Add</a></li>
+                        </ul>
+                    </li>
+                @endcan
+
+                @can('view', Auth::user())
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-users"></i> <span> Parents</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="{{ route("parent.index") }}">Parent List</a></li>
+                            <li><a href="{{ route("parent.create") }}">Parent Add</a></li>
+                        </ul>
+                    </li>
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-graduation-cap"></i> <span> Students</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="{{ route("student.index") }}">Student List</a></li>
+                            <li><a href="{{ route("student.create") }}">Student Add</a></li>
+                        </ul>
+                    </li>
+                @endcan
+
+                @can('viewAny', Auth::user())
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Teachers</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="teachers.html">Teacher List</a></li>
+                            <li><a href="teacher-details.html">Teacher View</a></li>
+                            <li><a href="add-teacher.html">Teacher Add</a></li>
+                            <li><a href="edit-teacher.html">Teacher Edit</a></li>
+                        </ul>
+                    </li>
+                @endcan
+
                 <li class="submenu">
                     <a href="#"><i class="fas fa-building"></i> <span> Departments</span> <span
                             class="menu-arrow"></span></a>
