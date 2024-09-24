@@ -78,6 +78,17 @@
                     </li>
                 @endcan
 
+                @can('view', Auth::user())
+                <li class="submenu">
+                    <a href="#"><i class="fas fa-building"></i> <span> Events</span> <span
+                            class="menu-arrow"></span></a>
+                    <ul>
+                        <li><a href="{{ route("event.index") }}">Events List</a></li>
+                        <li><a href="{{ route("event.create") }}">Events Add</a></li>
+                    </ul>
+                </li>
+            @endcan
+
                 <li class="submenu">
                     <a href="#"><i class="fas fa-clipboard"></i> <span> Invoices</span> <span
                             class="menu-arrow"></span></a>
