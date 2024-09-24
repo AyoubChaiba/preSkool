@@ -4,7 +4,6 @@
 
 @section("style")
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/datatables.min.css') }}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 @endsection
 

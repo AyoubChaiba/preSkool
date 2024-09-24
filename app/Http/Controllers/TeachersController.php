@@ -2,25 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Students;
 use App\Events\UserCreated;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\Subjects;
+use App\Models\Teachers;
+use App\Models\User;
 use Flasher\Laravel\Facade\Flasher;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 
 class TeachersController extends Controller
 {
     public function index() {
-        $students = Students::all();
-        return view('pages.students.list', compact('students'));
+        $teachers = Teachers::withCount('courses')->get();
+        return view('pages.teachers.list', compact('teachers'));
     }
 
     public function create()
     {
-        return view('pages.students.create');
+        $subjects = Subjects::all();
+        return view('pages.teachers.create', compact('subjects'));
     }
 
     public function store(Request $request)
@@ -28,7 +32,7 @@ class TeachersController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'hire_date' => ['required', 'date'],
+            'hire_date' => ['required', 'date_format:d-m-Y'],
             'subject_id' => ['required', 'exists:subjects,id'],
         ]);
 
@@ -43,6 +47,9 @@ class TeachersController extends Controller
             ], 400);
         }
 
+        $hireDate = Carbon::createFromFormat('d-m-Y', $request->hire_date)->format('Y-m-d');
+
+
         $password = Str::random(10);
 
         $user = User::create([
@@ -53,10 +60,10 @@ class TeachersController extends Controller
         ]);
 
         if ($user->role === 'teacher') {
-            Students::create([
+            Teachers::create([
                 'user_id' => $user->id,
-                'admission_date' => $request->admission_date,
-                'parent_id' => $request->parent_id,
+                'hire_date' => $hireDate,
+                'subject_id' => $request->subject_id,
             ]);
         }
 
@@ -66,7 +73,7 @@ class TeachersController extends Controller
 
         return response()->json([
             'success' => true,
-            'redirect_url' => route('user.index')
+            'redirect_url' => route('teacher.index')
         ], 201);
     }
 }

@@ -15,8 +15,12 @@ class Students extends Model
         'parent_id',
     ];
 
-    public function profile() {
+    public function user() {
         return $this->belongsTo(user::class, 'user_id');
     }
 
+    public function parent() {
+        return $this->belongsTo(Parents::class, 'parent_id');
+    }
+    
 }

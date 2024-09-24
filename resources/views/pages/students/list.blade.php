@@ -4,7 +4,6 @@
 
 @section("style")
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/datatables.min.css') }}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 @endsection
 
@@ -62,7 +61,7 @@
                                     <h3 class="page-title">Students</h3>
                                 </div>
                                 <div class="col-auto text-end float-end ms-auto download-grp">
-                                    <a href="{{ route('user.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+                                    <a href="{{ route('student.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -80,28 +79,29 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($users as $user)
+                                    @foreach ($students as $student)
                                         <tr>
-                                            <td>{{ $user->id }}</td>
+                                            <td>{{ $student->id }}</td>
                                             <td>
                                                 <h2 class="table-avatar">
                                                     <a href="student-details.html" class="avatar avatar-sm me-2">
                                                         <img class="avatar-img rounded-circle" src="{{ asset('assets/img/profiles/avatar-01.jpg') }}" alt="User Image">
                                                     </a>
-                                                    <a href="student-details.html">{{ $user->name }}</a>
+                                                    <a href="student-details.html">{{ $student->user->name }}</a>
                                                 </h2>
                                             </td>
-                                            <td>{{ $user->email }}</td>
-                                            <td>{{ $user->role }}</td>
+                                            <td>{{ $student->user->email }}</td>
+                                            <td>{{ $student->admission_date }}</td>
+                                            <td>{{ $student->parent->user->name }}</td>
                                             <td class="text-end">
                                                 <div class="actions">
-                                                    <a href="{{ route('user.show', $user->id) }}" class="btn btn-sm bg-success-light me-2">
+                                                    <a href="{{ route('student.show', $student->id) }}" class="btn btn-sm bg-success-light me-2">
                                                         <i class="feather-eye"></i>
                                                     </a>
-                                                    <a href="{{ route('user.edit', $user->id) }}" class="btn btn-sm bg-danger-light me-2">
+                                                    <a href="{{ route('student.edit', $student->id) }}" class="btn btn-sm bg-danger-light me-2">
                                                         <i class="feather-edit"></i>
                                                     </a>
-                                                    <form action="{{ route('user.destroy', $user->id) }}" method="POST" style="display: inline;">
+                                                    <form action="{{ route('student.destroy', $student->id) }}" method="POST" style="display: inline;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm bg-danger-light btn-delete" aria-label="Delete">
@@ -126,6 +126,7 @@
 @section('js-content')
     <script src="{{ asset('assets/plugins/datatables/datatables.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
     $(document).ready(function() {
@@ -155,7 +156,7 @@
                             button.closest('tr').fadeOut();
                             Swal.fire({
                                 title: 'Deleted!',
-                                text: 'User deleted successfully!',
+                                text: 'Student deleted successfully!',
                                 icon: 'success',
                                 confirmButtonText: 'OK'
                             });
