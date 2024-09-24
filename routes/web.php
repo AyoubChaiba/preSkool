@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\EventsController;
 use App\Http\Controllers\CoursesController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ParentsController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\SubjectsController;
 use App\Http\Controllers\TeachersController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 
 
 
@@ -57,6 +58,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('/teacher', TeachersController::class);
         Route::resource('/subject', SubjectsController::class);
         Route::resource('/course', CoursesController::class);
+        Route::resource('/event', EventsController::class);
+        Route::get('/event/dataJson', [EventsController::class, 'dataJson'])->name('event.getdata');
     });
 
     Route::middleware(['role:parent,admin'])->group(function () {
