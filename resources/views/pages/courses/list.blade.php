@@ -89,21 +89,26 @@
                                             <td>{{ $course->subject->name }}</td>
                                             <td>{{ $course->teacher->user->name }}</td>
                                             <td class="text-end">
-                                                <div class="actions">
-                                                    <a href="{{ route('course.show', $course->id) }}" class="btn btn-sm bg-success-light me-2">
-                                                        <i class="feather-eye"></i>
-                                                    </a>
-                                                    <a href="{{ route('course.edit', $course->id) }}" class="btn btn-sm bg-danger-light me-2">
-                                                        <i class="feather-edit"></i>
-                                                    </a>
-                                                    <form action="{{ route('course.destroy', $course->id) }}" method="POST" style="display: inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm bg-danger-light btn-delete" aria-label="Delete">
-                                                            <i class="feather-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                </div>
+                                                @can('viewAny', Auth::user())
+                                                    <div class="actions">
+                                                        <a href="{{ route('course.edit', $course->id) }}" class="btn btn-sm bg-danger-light me-2">
+                                                            <i class="feather-edit"></i>
+                                                        </a>
+                                                        <form action="{{ route('course.destroy', $course->id) }}" method="POST" style="display: inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm bg-danger-light btn-delete" aria-label="Delete">
+                                                                <i class="feather-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                @endcan
+                                                @can('viewStudents', Auth::user())
+                                                {{-- add btn check and  --}}
+                                                    <button class="btn btn-sm bg-danger-light btn-delete" aria-label="Delete">
+                                                        <i class="fa fa-check"></i>
+                                                    </button>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @endforeach
@@ -121,6 +126,8 @@
 @section('js-content')
     <script src="{{ asset('assets/plugins/datatables/datatables.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="{{ asset("assets/plugins/sweetalert/sweetalert2.all.min.js") }}"></script>
 
     <script>
     $(document).ready(function() {
