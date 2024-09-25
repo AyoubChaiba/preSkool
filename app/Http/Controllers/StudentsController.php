@@ -2,20 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Students;
-use App\Models\Parents;
 use App\Events\UserCreated;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
+use App\Models\Parents;
+use App\Models\Students;
+use App\Models\User;
 use Flasher\Laravel\Facade\Flasher;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class StudentsController extends Controller
 {
     public function index() {
         $students = Students::all();
+        if (Gate::allows('viewTeacher', Auth::user())) {
+            $teacherId = Auth::user()->id;
+            $students = Students::whereHas('courses', function($query) use ($teacherId) {
+                $query->where('teacher_id', $teacherId);
+            })->get();
+        }
         return view('pages.students.list', compact('students'));
     }
 

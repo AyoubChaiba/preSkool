@@ -74,7 +74,7 @@
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>date admission</th>
-                                        <th>Subject</th>
+                                        <th>Subject</th>     
                                         <th>Courses</th>
                                         <th class="text-end">Action</th>
                                     </tr>

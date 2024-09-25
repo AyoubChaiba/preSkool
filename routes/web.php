@@ -45,26 +45,43 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/admin/dashboard', [DashboardController::class , "AdminDashboard"])->name('admin.dashboard');
-        Route::resource('/admin', AdminController::class);
+        // Route::resource('/admin', AdminController::class);
     });
 
-    Route::middleware(['role:student,admin'])->group(function () {
-        Route::get('/student/dashboard', [DashboardController::class , "StudentDashboard"])->name('student.dashboard');
-        Route::resource('/student', StudentsController::class);
-    });
+    Route::resource('/admin', AdminController::class);
 
-    Route::middleware(['role:teacher,admin'])->group(function () {
-        Route::get('/teacher/dashboard', [DashboardController::class , "TeacherDashboard"])->name('teacher.dashboard');
-        Route::resource('/teacher', TeachersController::class);
-        Route::resource('/subject', SubjectsController::class);
-        Route::resource('/course', CoursesController::class);
-        Route::resource('/event', EventsController::class);
-        Route::get('/event/dataJson', [EventsController::class, 'dataJson'])->name('event.getdata');
-    });
+    Route::get('/student/dashboard', [DashboardController::class , "StudentDashboard"])->name('student.dashboard');
+    Route::resource('/student', StudentsController::class);
 
-    Route::middleware(['role:parent,admin'])->group(function () {
-        Route::resource('/parent', ParentsController::class);
-    });
+
+    Route::get('/teacher/dashboard', [DashboardController::class , "TeacherDashboard"])->name('teacher.dashboard');
+    Route::resource('/teacher', TeachersController::class);
+    Route::resource('/subject', SubjectsController::class);
+    Route::resource('/course', CoursesController::class);
+    Route::resource('/event', EventsController::class);
+    Route::get('/event/dataJson', [EventsController::class, 'dataJson'])->name('event.getdata');
+
+    Route::resource('/parent', ParentsController::class);
+
+
+
+    // Route::middleware(['role:student,admin,teacher'])->group(function () {
+    //     Route::get('/student/dashboard', [DashboardController::class , "StudentDashboard"])->name('student.dashboard');
+    //     Route::resource('/student', StudentsController::class);
+    // });
+
+    // Route::middleware(['role:teacher,admin'])->group(function () {
+    //     Route::get('/teacher/dashboard', [DashboardController::class , "TeacherDashboard"])->name('teacher.dashboard');
+    //     Route::resource('/teacher', TeachersController::class);
+    //     Route::resource('/subject', SubjectsController::class);
+    //     Route::resource('/course', CoursesController::class);
+    //     Route::resource('/event', EventsController::class);
+    //     Route::get('/event/dataJson', [EventsController::class, 'dataJson'])->name('event.getdata');
+    // });
+
+    // Route::middleware(['role:parent,admin'])->group(function () {
+    //     Route::resource('/parent', ParentsController::class);
+    // });
 
 
 });

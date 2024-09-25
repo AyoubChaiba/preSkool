@@ -11,8 +11,10 @@
 
                 @can('viewAny', Auth::user())
                     <li class="submenu">
-                        <a href="#"><i class="fa fa-user-secret"></i> <span> Admin</span> <span
-                                class="menu-arrow"></span></a>
+                        <a href="#"><i class="fa fa-user-secret"></i>
+                            <span> Admin</span>
+                            <span class="menu-arrow"></span>
+                        </a>
                         <ul>
                             <li><a href="{{route("admin.index")}}">Admin List</a></li>
                             <li><a href="{{route("admin.create")}}">Admin Add</a></li>
@@ -20,17 +22,18 @@
                     </li>
                 @endcan
 
-                @can('view', Auth::user())
+                @can('viewAny', Auth::user())
                     <li class="submenu">
                         <a href="#"><i class="fas fa-users"></i> <span> Parents</span> <span
                                 class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="{{ route("parent.index") }}">Parent List</a></li>
-                            @can('viewAny', Auth::user())
-                                <li><a href="{{ route("parent.create") }}">Parent Add</a></li>
-                            @endcan
+                            <li><a href="{{ route("parent.create") }}">Parent Add</a></li>
                         </ul>
                     </li>
+                @endcan
+
+                @can('viewAny', Auth::user())
                     <li class="submenu">
                         <a href="#"><i class="fas fa-graduation-cap"></i> <span> Students</span> <span
                                 class="menu-arrow"></span></a>
@@ -43,20 +46,18 @@
                     </li>
                 @endcan
 
-                @can('view', Auth::user())
+                @can('viewAny', Auth::user())
                     <li class="submenu">
                         <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Teachers</span> <span
                                 class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="{{ route("teacher.index") }}">Teacher List</a></li>
-                            @can('viewAny', Auth::user())
-                                <li><a href="{{ route("teacher.create") }}">Teacher Add</a></li>
-                            @endcan
+                            <li><a href="{{ route("teacher.create") }}">Teacher Add</a></li>
                         </ul>
                     </li>
                 @endcan
 
-                @can('view', Auth::user())
+                @can('viewAny', Auth::user())
                     <li class="submenu">
                         <a href="#"><i class="fas fa-book-reader"></i> <span> Subjects</span> <span
                                 class="menu-arrow"></span></a>
@@ -67,28 +68,28 @@
                     </li>
                 @endcan
 
-                @can('view', Auth::user())
-                    <li class="submenu">
-                        <a href="#"><i class="fas fa-building"></i> <span> Courses</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="{{ route("course.index") }}">Courses List</a></li>
+                <li class="submenu">
+                    <a href="#"><i class="fas fa-building"></i> <span> Courses</span> <span
+                            class="menu-arrow"></span></a>
+                    <ul>
+                        <li><a href="{{ route("course.index") }}">Courses List</a></li>
+                        @can('view', Auth::user())
                             <li><a href="{{ route("course.create") }}">Courses Add</a></li>
-                        </ul>
-                    </li>
-                @endcan
+                        @endcan
+                    </ul>
+                </li>
 
-                @can('view', Auth::user())
                 <li class="submenu">
                     <a href="#"><i class="fas fa-building"></i> <span> Events</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="{{ route("event.index") }}">Events List</a></li>
-                        <li><a href="{{ route("event.create") }}">Events Add</a></li>
+                        <li><a href="{{ route("event.index") }}">Event Schedule</a></li>
+                        @can('view', Auth::user())
+                            <li><a href="{{ route("event.create") }}">Events Add</a></li>
+                        @endcan
                     </ul>
                 </li>
-            @endcan
-
+{{--
                 <li class="submenu">
                     <a href="#"><i class="fas fa-clipboard"></i> <span> Invoices</span> <span
                             class="menu-arrow"></span></a>
@@ -146,7 +147,7 @@
                 </li>
                 <li>
                     <a href="settings.html"><i class="fas fa-cog"></i> <span>Settings</span></a>
-                </li>
+                </li> --}}
             </ul>
         </div>
     </div>

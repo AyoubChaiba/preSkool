@@ -10,6 +10,8 @@ use App\Models\User;
 use Flasher\Laravel\Facade\Flasher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -18,8 +20,17 @@ class TeachersController extends Controller
 {
     public function index() {
         $teachers = Teachers::withCount('courses')->get();
+
+        if (Gate::allows('viewStudents', Auth::user())) {
+            $studentId = Auth::user()->id;
+            $teachers = Teachers::whereHas('courses.enrollments', function($query) use ($studentId) {
+                $query->where('student_id', $studentId);
+            })->get();
+        }
+
         return view('pages.teachers.list', compact('teachers'));
     }
+
 
     public function create()
     {
