@@ -14,13 +14,11 @@ class SubjectsController extends Controller
         return view('pages.subjects.list', compact('subjects'));
     }
 
-    public function create()
-    {
+    public function create() {
         return view('pages.subjects.create');
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
         ]);
@@ -28,7 +26,7 @@ class SubjectsController extends Controller
         if ($validator->fails()) {
             Flasher::error('Please fix the following errors:');
             return response()->json([
-                'error' => $validator->errors()
+                'error' => $validator->errors(),
             ], 400);
         }
 
@@ -40,48 +38,49 @@ class SubjectsController extends Controller
 
         return response()->json([
             'success' => true,
-            'redirect_url' => route('subject.index')
+            'redirect_url' => route('subject.index'),
         ], 201);
     }
 
     public function edit($id) {
-        $subject = Subjects::find($id);
+        $subject = Subjects::findOrFail($id);
         return view('pages.subjects.edit', compact('subject'));
     }
 
     public function update(Request $request, $id) {
-        $subject = Subjects::find($id);
-
         $validator = Validator::make($request->all(), [
-            'name' => ['required','string','max:255'],
+            'name' => ['required', 'string', 'max:255'],
         ]);
 
         if ($validator->fails()) {
             Flasher::error('Please fix the following errors:');
             return response()->json([
-                'error' => $validator->errors()
+                'error' => $validator->errors(),
             ], 400);
         }
 
+        $subject = Subjects::findOrFail($id);
         $subject->update([
             'name' => $request->name,
         ]);
 
-        Flasher::addSuccess("Subject updated successfully");
+        Flasher::addSuccess("Successfully updated the subject");
 
         return response()->json([
             'success' => true,
-            'redirect_url' => route('subject.index')
+            'redirect_url' => route('subject.index'),
         ], 200);
     }
 
     public function destroy($id) {
-        $subject = Subjects::find($id);
+        $subject = Subjects::findOrFail($id);
         $subject->delete();
+
+        Flasher::addSuccess("Successfully deleted the subject");
 
         return response()->json([
             'success' => true,
-            'redirect_url' => route('subject.index')
+            'redirect_url' => route('subject.index'),
         ], 200);
     }
 }

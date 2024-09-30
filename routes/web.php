@@ -3,17 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\EventsController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\CoursesController;
 use App\Http\Controllers\ParentsController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\SubjectsController;
 use App\Http\Controllers\TeachersController;
 use App\Http\Controllers\DashboardController;
-
-
-
-
+use App\Http\Controllers\EnrollmentsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,23 +42,27 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/admin/dashboard', [DashboardController::class , "AdminDashboard"])->name('admin.dashboard');
-        // Route::resource('/admin', AdminController::class);
+        Route::resource('/admin', AdminController::class);
+        Route::resource('enrollment', EnrollmentsController::class);
     });
-
-    Route::resource('/admin', AdminController::class);
 
     Route::get('/student/dashboard', [DashboardController::class , "StudentDashboard"])->name('student.dashboard');
     Route::resource('/student', StudentsController::class);
 
-
     Route::get('/teacher/dashboard', [DashboardController::class , "TeacherDashboard"])->name('teacher.dashboard');
     Route::resource('/teacher', TeachersController::class);
+
+    Route::get('courses/{id}/students', [EnrollmentsController::class, 'getStudent'])->name('courses.students');
+
     Route::resource('/subject', SubjectsController::class);
     Route::resource('/course', CoursesController::class);
-    Route::resource('/event', EventsController::class);
-    Route::get('/event/dataJson', [EventsController::class, 'dataJson'])->name('event.getdata');
-
     Route::resource('/parent', ParentsController::class);
+
+
+    Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name("show.attendance");
+    Route::get('/attendance/{id}/create', [AttendanceController::class, 'create'])->name("create.attendance");
+    Route::post('/attendance', [AttendanceController::class, 'store'])->name("store.attendance");
+    Route::get('/attendance/{id}/edit', [AttendanceController::class, 'edit'])->name("edit.attendance");
 
 
 

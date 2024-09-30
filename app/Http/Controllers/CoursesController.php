@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Courses;
 use App\Models\Subjects;
-use App\Models\teachers;
+use App\Models\Teachers;
 use Flasher\Laravel\Facade\Flasher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -30,7 +30,7 @@ class CoursesController extends Controller
     public function create()
     {
         $subjects = Subjects::all();
-        $teachers = teachers::all();
+        $teachers = Teachers::all();
         return view('pages.courses.create', compact('subjects', 'teachers'));
     }
 
@@ -77,7 +77,7 @@ class CoursesController extends Controller
      */
     public function show(Courses $courses)
     {
-        //
+        return view('pages.courses.show', compact('courses'));
     }
 
     /**
@@ -86,9 +86,11 @@ class CoursesController extends Controller
      * @param  \App\Models\Courses  $courses
      * @return \Illuminate\Http\Response
      */
-    public function edit(Courses $courses)
+    public function edit(Courses $course)
     {
-        //
+        $subjects = Subjects::all();
+        $teachers = Teachers::all();
+        return view('pages.courses.edit', compact('course', 'subjects', 'teachers'));
     }
 
     /**
@@ -98,9 +100,33 @@ class CoursesController extends Controller
      * @param  \App\Models\Courses  $courses
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Courses $courses)
+    public function update(Request $request, Courses $course)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'subject_id' => ['required', 'exists:subjects,id'],
+            'teacher_id' => ['required', 'exists:teachers,id'],
+        ]);
+
+        if ($validator->fails()) {
+            Flasher::error('Please fix the following errors:');
+            return response()->json([
+                'error' => $validator->errors()
+            ], 400);
+        }
+
+        $course->update([
+            'name' => $request->name,
+            'subject_id' => $request->subject_id,
+            'teacher_id' => $request->teacher_id,
+        ]);
+
+        Flasher::addSuccess("Successfully updated the course.");
+
+        return response()->json([
+            'success' => true,
+            'redirect_url' => route('course.index')
+        ], 200);
     }
 
     /**
@@ -111,6 +137,12 @@ class CoursesController extends Controller
      */
     public function destroy(Courses $courses)
     {
-        //
+        $courses->delete();
+        Flasher::addSuccess("Course deleted successfully.");
+
+        return response()->json([
+            'success' => true,
+            'redirect_url' => route('course.index')
+        ], 200);
     }
 }

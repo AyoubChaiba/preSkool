@@ -14,4 +14,19 @@ class Enrollments extends Model
         'course_id',
         'enrollment_date',
     ];
+
+    protected $casts = [
+        'enrollment_date' => 'datetime',
+    ];
+
+    public function student()
+    {
+        return $this->belongsTo(Students::class);
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Courses::class);
+    }
+
 }

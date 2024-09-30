@@ -85,11 +85,64 @@ class StudentsController extends Controller
     public function edit($id)
     {
         $student = Students::with('user')->findOrFail($id);
+        $parents = Parents::all();
 
-        return view('pages.students.edit', compact('student'));
+        return view('pages.students.edit', compact('student','parents'));
+    }
+
+        public function update(Request $request, $id)
+    {
+        $student = Students::with('user')->findOrFail($id);
+        $user = $student->user;
+
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'admission_date' => ['required', 'date_format:d-m-Y'],
+            'parent_id' => ['required', 'exists:parents,id'],
+        ]);
+
+        if ($validator->fails()) {
+            Flasher::error('Please fix the following errors:');
+            return response()->json([
+                'error' => $validator->errors()
+            ], 400);
+        }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->save();
+
+        $admissionDate = Carbon::createFromFormat('d-m-Y', $request->admission_date)->format('Y-m-d');
+        $student->admission_date = $admissionDate;
+        $student->parent_id = $request->parent_id;
+        $student->save();
+
+        Flasher::addSuccess($user->name . ' has been updated successfully!');
+
+        return response()->json([
+            'success' => true,
+            'redirect_url' => route('student.index')
+        ], 200);
     }
 
 
+    public function destroy($id)
+    {
+        $student = Students::with('user')->findOrFail($id);
+        $user = $student->user;
+
+        $student->delete();
+
+        $user->delete();
+
+        Flasher::addSuccess($user->name . ' has been deleted successfully!');
+
+        return response()->json([
+            'success' => true,
+            'redirect_url' => route('student.index')
+        ], 200);
+    }
 
 
 }

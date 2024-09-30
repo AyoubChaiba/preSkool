@@ -1,12 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'List Events')
+@section('title', 'Enrollments')
 
 @section("style")
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/datatables.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css' rel='stylesheet' />
-
 @endsection
 
 @section('main')
@@ -17,40 +15,15 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="page-sub-header">
-                        <h3 class="page-title">Events</h3>
+                        <h3 class="page-title">Enrollments</h3>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('event.index') }}"> Events</a></li>
-                            <li class="breadcrumb-item active">All Events</li>
+                            <li class="breadcrumb-item"><a href="{{ route('enrollment.index') }}">Enrollments</a></li>
+                            <li class="breadcrumb-item active">All Enrollments</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-
-        {{-- <div class="student-group-form">
-            <div class="row">
-                <div class="col-lg-3 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search by ID ..." id="search-id">
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search by Name ..." id="search-name">
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search by Phone ..." id="search-phone">
-                    </div>
-                </div>
-                <div class="col-lg-2">
-                    <div class="search-student-btn">
-                        <button type="button" id="search-button" class="btn btn-primary">Search</button>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
 
         <div class="row">
             <div class="col-sm-12">
@@ -60,27 +33,54 @@
                         <div class="page-header">
                             <div class="row align-items-center">
                                 <div class="col">
-                                    <h3 class="page-title">Event Schedule</h3>
+                                    <h3 class="page-title">Enrollments</h3>
                                 </div>
                                 <div class="col-auto text-end float-end ms-auto download-grp">
-                                    <a href="{{ route('event.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+                                    <a href="{{ route('enrollment.create') }}" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
 
                         <div class="table-responsive">
-                            @php
-                                $eventsArray = $events->map(function($event) {
-                                    return [
-                                        'title' => $event->title,
-                                        'start' => $event->start_time,
-                                        'end' => $event->end_time,
-                                        'url' => route('event.show', $event->id),
-                                    ];
-                                });
-                            @endphp
-                            <div id="calendar"></div>
+                            <table class="table border-0 star-student table-hover table-center mb-0 datatable table-striped">
+                                <thead class="student-thread">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Student</th>
+                                        <th>Course</th>
+                                        <th>Enrollment Date</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($enrollments as $enrollment)
+                                        <tr>
+                                            <td>{{ $enrollment->id }}</td>
+                                            <td>{{ $enrollment->student->user->name }}</td>
+                                            <td>{{ $enrollment->course->name }}</td>
+                                            <td>{{ $enrollment->enrollment_date->format('d-m-Y') }}</td>
+                                            <td class="text-end">
+                                                <div class="actions">
+                                                    <a href="{{ route('enrollment.edit', $enrollment->id) }}" class="btn btn-sm bg-danger-light me-2">
+                                                        <i class="feather-edit"></i>
+                                                    </a>
+                                                    <form action="{{ route('enrollment.destroy', $enrollment->id) }}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm bg-danger-light btn-delete" aria-label="Delete">
+                                                            <i class="feather-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -92,34 +92,53 @@
 @section('js-content')
     <script src="{{ asset('assets/plugins/datatables/datatables.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
+        $(document).ready(function() {
+            $('.btn-delete').click(function(e) {
+                e.preventDefault();
 
-            // Use the JSON generated by Blade
-            var events = @json($eventsArray);
+                const button = $(this);
+                const form = button.closest('form');
 
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                events: events,  // Assign the pre-processed events here
-                eventClick: function(info) {
-                    info.jsEvent.preventDefault(); // لمنع الانتقال الفوري
-
-                    if (info.event.url) {
-                        window.open(info.event.url, "_blank"); // فتح الرابط في نافذة جديدة
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, cancel!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: 'POST',
+                            url: form.attr('action'),
+                            data: {
+                                _method: 'DELETE',
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                button.closest('tr').fadeOut();
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: 'Enrollment deleted successfully!',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                });
+                            },
+                            error: function(error) {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Error deleting enrollment.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        });
                     }
-                }
+                });
             });
-
-            calendar.render();
         });
     </script>
-
-
-
-
-
-
 @endsection
