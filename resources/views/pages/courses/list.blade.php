@@ -103,11 +103,10 @@
                                                         </form>
                                                     </div>
                                                 @endcan
-                                                @can('viewStudents', Auth::user())
-                                                {{-- add btn check and  --}}
-                                                    <button class="btn btn-sm bg-danger-light btn-delete" aria-label="Delete">
-                                                        <i class="fa fa-check"></i>
-                                                    </button>
+                                                @can('view', Auth::user())
+                                                    <a href="{{ route("courses.students", $course->id) }}" class="btn btn-sm bg-danger-light" aria-label="Delete">
+                                                        <i class="fa fa-users"></i>
+                                                    </a>
                                                 @endcan
                                             </td>
                                         </tr>

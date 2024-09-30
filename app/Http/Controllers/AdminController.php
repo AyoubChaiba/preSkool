@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Events\UserCreated;
-use App\Events\UserUpdated;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Flasher\Laravel\Facade\Flasher;
 use Illuminate\Support\Facades\Validator;
@@ -50,8 +47,6 @@ class AdminController extends Controller
             'role' => 'admin',
         ]);
 
-        event(new UserCreated($user, $request->password, $user->role));
-
         Flasher::addSuccess($user->name . ' has been created successfully! Role: ' . $user->role);
 
         return response()->json([
@@ -76,13 +71,14 @@ class AdminController extends Controller
         return view('pages.admin.edit', compact('admin'));
     }
 
+
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        $admin = User::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $admin->id],
             'password' => ['nullable', 'string', 'min:8'],
         ]);
 
@@ -97,20 +93,17 @@ class AdminController extends Controller
             ], 400);
         }
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => 'admin',
-        ]);
+
+        $admin->name = $request->name;
+        $admin->email = $request->email;
 
         if ($request->filled('password')) {
-            $user->password = bcrypt($request->password);
-            $user->save();
+            $admin->password = bcrypt($request->password);
         }
 
-        event(new UserUpdated($user, $request->password, $request->role));
+        $admin->save();
 
-        Flasher::addSuccess($user->name . ' has been updated successfully! Role: ' . $user->role);
+        Flasher::addSuccess($admin->name . ' has been updated successfully!');
 
         return response()->json([
             'success' => true,

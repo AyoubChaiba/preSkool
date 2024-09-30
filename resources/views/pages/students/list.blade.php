@@ -95,9 +95,9 @@
                                             <td>{{ $student->parent->user->name }}</td>
                                             <td class="text-end">
                                                 <div class="actions">
-                                                    <a href="{{ route('student.show', $student->id) }}" class="btn btn-sm bg-success-light me-2">
+                                                    {{-- <a href="{{ route('student.show', $student->id) }}" class="btn btn-sm bg-success-light me-2">
                                                         <i class="feather-eye"></i>
-                                                    </a>
+                                                    </a> --}}
                                                     <a href="{{ route('student.edit', $student->id) }}" class="btn btn-sm bg-danger-light me-2">
                                                         <i class="feather-edit"></i>
                                                     </a>

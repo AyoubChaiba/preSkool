@@ -82,17 +82,15 @@
                                         <tr>
                                             <td>{{ $subject->id }}</td>
                                             <td>
-                                                <h2 class="table-avatar">
-                                                    <a href="student-details.html">{{ $subject->name }}</a>
-                                                </h2>
+                                                {{ $subject->name }}
                                             </td>
                                             <td>{{ $subject->courses_count  }}</td>
                                             <td>{{ $subject->teachers_count  }}</td>
                                             <td class="text-end">
                                                 <div class="actions">
-                                                    <a href="{{ route('subject.show', $subject->id) }}" class="btn btn-sm bg-success-light me-2">
+                                                    {{-- <a href="{{ route('subject.show', $subject->id) }}" class="btn btn-sm bg-success-light me-2">
                                                         <i class="feather-eye"></i>
-                                                    </a>
+                                                    </a> --}}
                                                     <a href="{{ route('subject.edit', $subject->id) }}" class="btn btn-sm bg-danger-light me-2">
                                                         <i class="feather-edit"></i>
                                                     </a>

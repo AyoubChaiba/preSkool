@@ -95,9 +95,9 @@
                                             <td>{{ $admin->role }}</td>
                                             <td class="text-end">
                                                 <div class="actions">
-                                                    <a href="{{ route('admin.show', $admin->id) }}" class="btn btn-sm bg-success-light me-2">
+                                                    {{-- <a href="{{ route('admin.show', $admin->id) }}" class="btn btn-sm bg-success-light me-2">
                                                         <i class="feather-eye"></i>
-                                                    </a>
+                                                    </a> --}}
                                                     <a href="{{ route('admin.edit', $admin->id) }}" class="btn btn-sm bg-danger-light me-2">
                                                         <i class="feather-edit"></i>
                                                     </a>

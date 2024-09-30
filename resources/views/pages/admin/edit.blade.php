@@ -15,10 +15,10 @@
             <div class="row align-items-center">
                 <div class="col-sm-12">
                     <div class="page-sub-header">
-                        <h3 class="page-title">Edit User</h3>
+                        <h3 class="page-title">Edit Admin</h3>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="students.html">User</a></li>
-                            <li class="breadcrumb-item active">Edit User</li>
+                            <li class="breadcrumb-item"><a href="{{ route("admin.index") }}">Admin</a></li>
+                            <li class="breadcrumb-item active">Edit Admin</li>
                         </ul>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                 <div class="card comman-shadow">
                     <div class="card-body">
 
-                        <form id="userForm" action="{{ route('admin.update', $admin->id) }}" method="POST">
+                        <form id="adminForm" action="{{ route('admin.update', $admin->id) }}" method="POST">
                             @csrf
                             @method('PUT')
                             <div class="row">
@@ -64,16 +64,16 @@
                                         <label>Role <span class="login-danger">*</span></label>
                                         <select class="form-control select" name="role" required>
                                             <option value="">Please Select Role</option>
-                                            <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                                            <option value="student" {{ $user->role == 'student' ? 'selected' : '' }}>Student</option>
-                                            <option value="teacher" {{ $user->role == 'teacher' ? 'selected' : '' }}>Teacher</option>
-                                            <option value="parent" {{ $user->role == 'parent' ? 'selected' : '' }}>Parent</option>
+                                            <option value="admin" {{ $admin->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                                            <option value="student" {{ $admin->role == 'student' ? 'selected' : '' }}>Student</option>
+                                            <option value="teacher" {{ $admin->role == 'teacher' ? 'selected' : '' }}>Teacher</option>
+                                            <option value="parent" {{ $admin->role == 'parent' ? 'selected' : '' }}>Parent</option>
                                         </select>
                                         <span class="text-danger error-text role_error"></span>
                                     </div>
                                 </div>
 
-                                <!-- Submit Button -->
+
                                 <div class="col-12">
                                     <div class="student-submit">
                                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -108,7 +108,7 @@
                 });
             }
 
-            $('#userForm').on('submit', function(e) {
+            $('#adminForm').on('submit', function(e) {
                 e.preventDefault();
                 clearValidationErrors();
 
@@ -129,11 +129,11 @@
                     processData: false,
                     contentType: false,
                     success: function(response) {
-                        $('#userForm')[0].reset();
+                        $('#adminForm')[0].reset();
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'User updated successfully!',
+                            text: 'Admin updated successfully!',
                         }).then(() => {
                             window.location.href = response.redirect_url;
                         });

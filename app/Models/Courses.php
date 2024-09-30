@@ -16,15 +16,23 @@ class Courses extends Model
         'teacher_id',
     ];
 
-    public function subject() {
-        return $this->belongsTo(subjects::class);
+    public function subject()
+    {
+        return $this->belongsTo(Subjects::class);
     }
 
-    public function teacher() {
+    public function teacher()
+    {
         return $this->belongsTo(teachers::class);
     }
 
-    public function enrollments() {
-        return $this->hasMany(Enrollments::class , "course_id");
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollments::class, "course_id");
+    }
+
+    public function students()
+    {
+        return $this->hasManyThrough(Students::class, Enrollments::class, 'course_id', 'id', 'id', 'student_id');
     }
 }

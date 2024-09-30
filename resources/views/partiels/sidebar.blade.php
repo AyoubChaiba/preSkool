@@ -69,7 +69,7 @@
                 @endcan
 
                 <li class="submenu">
-                    <a href="#"><i class="fas fa-building"></i> <span> Courses</span> <span
+                    <a href="#"><i class="fas fa-book-open"></i> <span> Courses</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="{{ route("course.index") }}">Courses List</a></li>
@@ -79,16 +79,17 @@
                     </ul>
                 </li>
 
-                <li class="submenu">
-                    <a href="#"><i class="fas fa-building"></i> <span> Events</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="{{ route("event.index") }}">Event Schedule</a></li>
-                        @can('view', Auth::user())
-                            <li><a href="{{ route("event.create") }}">Events Add</a></li>
-                        @endcan
-                    </ul>
-                </li>
+                @can('viewAny', Auth::user())
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-registered"></i> <span> Enrollments</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="{{ route("enrollment.index") }}">Enrollment List</a></li>
+                            <li><a href="{{ route("enrollment.create") }}">Enrolments Add</a></li>
+                        </ul>
+                    </li>
+                @endcan
+
 {{--
                 <li class="submenu">
                     <a href="#"><i class="fas fa-clipboard"></i> <span> Invoices</span> <span

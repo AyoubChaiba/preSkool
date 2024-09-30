@@ -74,7 +74,7 @@
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>date admission</th>
-                                        <th>Subject</th>     
+                                        <th>Subject</th>
                                         <th>Courses</th>
                                         <th class="text-end">Action</th>
                                     </tr>
@@ -94,9 +94,9 @@
                                             <td>{{ $teacher->courses_count }}</td>
                                             <td class="text-end">
                                                 <div class="actions">
-                                                    <a href="{{ route('teacher.show', $teacher->id) }}" class="btn btn-sm bg-success-light me-2">
+                                                    {{-- <a href="{{ route('teacher.show', $teacher->id) }}" class="btn btn-sm bg-success-light me-2">
                                                         <i class="feather-eye"></i>
-                                                    </a>
+                                                    </a> --}}
                                                     <a href="{{ route('teacher.edit', $teacher->id) }}" class="btn btn-sm bg-danger-light me-2">
                                                         <i class="feather-edit"></i>
                                                     </a>
