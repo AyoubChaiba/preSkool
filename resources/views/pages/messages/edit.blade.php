@@ -1,9 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Attendance for ' . $attendance->student->user->name)
+@section('title', 'Edit Fees')
 
 @section('style')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="{{ asset("assets/css/bootstrap-datetimepicker.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/select2/css/select2.min.css") }}" />
 @endsection
 
@@ -13,10 +14,10 @@
             <div class="row align-items-center">
                 <div class="col-sm-12">
                     <div class="page-sub-header">
-                        <h3 class="page-title">Edit Attendance for : {{ $attendance->student->user->name }} | {{ $attendance->course->name }}</h3>
+                        <h3 class="page-title">Edit Fees</h3>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('show.attendance', ['student_id' => $attendance->student->id , 'course_id' => $attendance->course->id ]) }}">Attendance</a></li>
-                            <li class="breadcrumb-item active">Edit Attendance</li>
+                            <li class="breadcrumb-item"><a href="{{ route('fees.index') }}">Fees</a></li>
+                            <li class="breadcrumb-item active">Edit Fees</li>
                         </ul>
                     </div>
                 </div>
@@ -27,29 +28,51 @@
             <div class="col-sm-12">
                 <div class="card comman-shadow">
                     <div class="card-body">
-                        <form id="attendanceForm" method="POST" action="{{ route('update.attendance', $attendance->id) }}">
+                        <form id="feesForm" method="POST" action="{{ route('fees.update', $fee->id) }}">
                             @csrf
-                            @method('PUT')
+                            @method('PUT') <!-- Use PUT method for updating -->
                             <div class="row">
-
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms">
-                                        <label>Attendance Date <span class="login-danger">*</span></label>
-                                        <input class="form-control" type="date" name="attendance_date" value="{{ $attendance->attendance_date }}">
-                                        <span class="text-danger error-text attendance_date_error"></span>
+                                        <label>Student <span class="login-danger">*</span></label>
+                                        <select class="form-control select" name="student_id">
+                                            <option value="">Select Student</option>
+                                            @foreach($students as $student)
+                                                <option value="{{ $student->id }}" {{ $fee->student_id == $student->id ? 'selected' : '' }}>
+                                                    {{ $student->user->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <span class="text-danger error-text student_id_error"></span>
                                     </div>
                                 </div>
 
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms">
-                                        <label>Status <span class="login-danger">*</span></label>
+                                        <label>Fee Type <span class="login-danger">*</span></label>
                                         <select class="form-control select" name="status">
-                                            <option value="">Select Status</option>
-                                            <option value="present" {{ $attendance->status == 'present' ? 'selected' : '' }}>Present</option>
-                                            <option value="absent" {{ $attendance->status == 'absent' ? 'selected' : '' }}>Absent</option>
-                                            <option value="excused" {{ $attendance->status == 'excused' ? 'selected' : '' }}>Excused</option>
+                                            <option value="">Select Fee Type</option>
+                                            <option value="paid" {{ $fee->status == 'paid' ? 'selected' : '' }}>Paid</option>
+                                            <option value="pending" {{ $fee->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                            <option value="overdue" {{ $fee->status == 'overdue' ? 'selected' : '' }}>Overdue</option>
                                         </select>
                                         <span class="text-danger error-text status_error"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group local-forms">
+                                        <label>Amount <span class="login-danger">*</span></label>
+                                        <input class="form-control" type="number" name="amount" value="{{ $fee->amount }}" placeholder="Enter Amount" step="0.01" min="0">
+                                        <span class="text-danger error-text amount_error"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group local-forms calendar-icon">
+                                        <label>Due Date <span class="login-danger">*</span></label>
+                                        <input class="form-control datetimepicker" type="text" name="due_date" value="{{ $fee->due_date->format('d-m-Y') }}" placeholder="DD-MM-YYYY">
+                                        <span class="text-danger error-text due_date_error"></span>
                                     </div>
                                 </div>
 
@@ -70,6 +93,8 @@
 @section('js-content')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="{{ asset("assets/plugins/select2/js/select2.min.js") }}"></script>
+    <script src="{{ asset("assets/plugins/moment/moment.min.js") }}"></script>
+    <script src="{{ asset("assets/js/bootstrap-datetimepicker.min.js") }}"></script>
 
     <script>
         $(document).ready(function() {
@@ -83,7 +108,7 @@
                 });
             }
 
-            $('#attendanceForm').on('submit', function(e) {
+            $('#feesForm').on('submit', function(e) {
                 e.preventDefault();
                 clearValidationErrors();
 
@@ -105,13 +130,13 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Attendance updated successfully!',
+                            text: 'Fees updated successfully!',
                         }).then(() => {
                             window.location.href = response.redirect_url;
                         });
                     },
                     error: function(xhr) {
-                        let errors = xhr.responseJSON.error;
+                        let errors = xhr.responseJSON.errors;
                         showValidationErrors(errors);
                         Swal.close();
                     },

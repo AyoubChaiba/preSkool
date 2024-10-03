@@ -23,4 +23,8 @@ class Students extends Model
         return $this->belongsTo(Parents::class, 'parent_id');
     }
 
+    public function enrollments() {
+        return $this->hasMany(Enrollments::class, 'student_id');
+    }
+
 }

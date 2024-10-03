@@ -16,4 +16,8 @@ class DashboardController extends Controller
         return view('pages/dashboard/dashboard-teacher');
     }
 
+    public function ParentDashboard() {
+        return view('pages/dashboard/dashboard-parent');
+    }
+
 }

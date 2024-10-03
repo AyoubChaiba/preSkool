@@ -1,9 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Grade ' . $grade->course->name)
+@section('title', 'Create Message')
 
 @section('style')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="{{ asset("assets/css/bootstrap-datetimepicker.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/select2/css/select2.min.css") }}" />
 @endsection
 
@@ -13,10 +14,10 @@
             <div class="row align-items-center">
                 <div class="col-sm-12">
                     <div class="page-sub-header">
-                        <h3 class="page-title">Edit Grade for: {{ $grade->student->user->name }} | {{ $grade->course->name }}</h3>
+                        <h3 class="page-title">Create Message</h3>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('show.grade', ['student_id' => $grade->student->id, 'course_id' => $grade->course->id]) }}">Grades</a></li>
-                            <li class="breadcrumb-item active">Edit Grade</li>
+                            <li class="breadcrumb-item"><a href="{{ route('messages.index') }}">Messages</a></li>
+                            <li class="breadcrumb-item active">Create Message</li>
                         </ul>
                     </div>
                 </div>
@@ -27,29 +28,41 @@
             <div class="col-sm-12">
                 <div class="card comman-shadow">
                     <div class="card-body">
-                        <form id="editGradeForm" method="POST" action="{{ route('update.grade', $grade->id) }}">
+                        <form id="messageForm" method="POST" action="{{ route('messages.store') }}">
                             @csrf
-                            @method('PUT')
                             <div class="row">
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms">
-                                        <label>Grade Date <span class="login-danger">*</span></label>
-                                        <input class="form-control" type="date" name="grade_date" value="{{ $grade->grade_date }}" required>
-                                        <span class="text-danger error-text grade_date_error"></span>
+                                        <label>Recipient <span class="login-danger">*</span></label>
+                                        <select class="form-control select" name="recipient_id">
+                                            <option value="">Select Recipient</option>
+                                            @foreach($users as $user)
+                                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <span class="text-danger error-text recipient_id_error"></span>
                                     </div>
                                 </div>
 
-                                <div class="col-12 col-sm-6">
+                                <div class="col-12 col-sm-12">
                                     <div class="form-group local-forms">
-                                        <label>Grade <span class="login-danger">*</span></label>
-                                        <input class="form-control" type="number" step="0.01" name="grade" value="{{ $grade->grade }}" required>
-                                        <span class="text-danger error-text grade_error"></span>
+                                        <label>Subject <span class="login-danger">*</span></label>
+                                        <input class="form-control" type="text" name="subject" placeholder="Enter Subject">
+                                        <span class="text-danger error-text subject_error"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group local-forms">
+                                        <label>Message <span class="login-danger">*</span></label>
+                                        <textarea class="form-control" name="message" placeholder="Enter your message"></textarea>
+                                        <span class="text-danger error-text message_error"></span>
                                     </div>
                                 </div>
 
                                 <div class="col-12">
                                     <div class="student-submit">
-                                        <button type="submit" class="btn btn-primary">Update</button>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
                                     </div>
                                 </div>
                             </div>
@@ -77,12 +90,12 @@
                 });
             }
 
-            $('#editGradeForm').on('submit', function(e) {
+            $('#messageForm').on('submit', function(e) {
                 e.preventDefault();
                 clearValidationErrors();
 
                 Swal.fire({
-                    title: 'Updating...',
+                    title: 'Loading...',
                     allowOutsideClick: false,
                     didOpen: () => {
                         Swal.showLoading();
@@ -96,16 +109,17 @@
                     type: 'POST',
                     data: formData,
                     success: function(response) {
+                        $('#messageForm')[0].reset();
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Grade updated successfully!',
+                            text: 'Message sent successfully!',
                         }).then(() => {
                             window.location.href = response.redirect_url;
                         });
                     },
                     error: function(xhr) {
-                        let errors = xhr.responseJSON.error;
+                        let errors = xhr.responseJSON.errors;
                         showValidationErrors(errors);
                         Swal.close();
                     },
@@ -115,7 +129,7 @@
                 });
             });
 
-            $('input').on('input', function() {
+            $('input, textarea, select').on('input change', function() {
                 $(this).next('.error-text').text('');
             });
         });

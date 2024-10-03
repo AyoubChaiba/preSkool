@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Courses;
+use App\Models\Students;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
@@ -10,14 +12,27 @@ class AttendanceController extends Controller
     /**
      * Display a listing of the attendance records.
      */
-    public function show($id)
+    public function show($student_id , $course_id)
     {
         $attendances = Attendance::with('student', 'course')
-            ->where('student_id', $id)
+            ->where('student_id', $student_id)
+            ->where('course_id', $course_id)
             ->get();
 
         return view('pages.courses.students.attendance.show', compact('attendances'));
     }
+
+
+
+    public function create( $student_id , $course_id )
+    {
+        $student = Students::find($student_id);
+        $course = Courses::find($course_id);
+
+
+        return view('pages.courses.students.attendance.create', compact('student', 'course'));
+    }
+
 
     /**
      * Store a newly created attendance record in storage.
@@ -31,12 +46,12 @@ class AttendanceController extends Controller
             'status' => 'required|in:present,absent,excused',
         ]);
 
-        $attendance = Attendance::create($validatedData);
+        Attendance::create($validatedData);
 
         return response()->json([
             'success' => true,
             'message' => 'Attendance recorded successfully!',
-            'data' => $attendance
+            'redirect_url' => route('courses.students' , $request->course_id)
         ], 201);
     }
 
@@ -47,33 +62,28 @@ class AttendanceController extends Controller
     {
         $attendance = Attendance::findOrFail($id);
 
-        return response()->json([
-            'success' => true,
-            'data' => $attendance
-        ], 200);
+        return view('pages.courses.students.attendance.edit', compact('attendance'));
+
     }
 
-    /**
-     * Update the specified attendance record in storage.
-     */
     public function update(Request $request, $id)
-    {
-        $validatedData = $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'course_id' => 'required|exists:courses,id',
-            'attendance_date' => 'required|date',
-            'status' => 'required|in:present,absent,excused',
-        ]);
+{
+    $validatedData = $request->validate([
+        'attendance_date' => 'required|date',
+        'status' => 'required|in:present,absent,excused',
+    ]);
 
-        $attendance = Attendance::findOrFail($id);
-        $attendance->update($validatedData);
+    $attendance = Attendance::findOrFail($id);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Attendance updated successfully!',
-            'data' => $attendance
-        ], 200);
-    }
+    $attendance->update($validatedData);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Attendance updated successfully!',
+        'redirect_url' => route('courses.students' , $attendance->course_id)
+    ], 200);
+}
+
 
     /**
      * Remove the specified attendance record from storage.

@@ -42,10 +42,22 @@
                                         <td class="text-end">
                                             @can('view', Auth::user())
                                                 <div class="actions">
-                                                    <a href="{{ route('attendance.') }}" class="btn btn-sm bg-danger-light me-2">
+                                                    <a href="{{ route('create.attendance', ['student_id' => $enrollment->student->id , 'course_id' => $enrollment->course->id]) }}" class="btn btn-sm bg-danger-light me-2">
                                                         <i class="feather-edit"></i>
                                                     </a>
-                                                    <a href="{{ route('attendance.show', $enrollment->student->id) }}" class="btn btn-sm bg-danger-light">
+                                                    <a href="{{ route('show.attendance', ['student_id' => $enrollment->student->id, 'course_id' => $enrollment->course->id]) }}" class="btn btn-sm bg-danger-light">
+                                                        <i class="feather-eye"></i>
+                                                    </a>
+                                                </div>
+                                            @endcan
+                                        </td>
+                                        <td class="text-end">
+                                            @can('view', Auth::user())
+                                                <div class="actions">
+                                                    <a href="{{ route('create.grade', ['student_id' => $enrollment->student->id, 'course_id' => $enrollment->course->id]) }}" class="btn btn-sm bg-danger-light me-2">
+                                                        <i class="feather-edit"></i>
+                                                    </a>
+                                                    <a href="{{ route('show.grade', ['student_id' => $enrollment->student->id, 'course_id' => $enrollment->course->id]) }}" class="btn btn-sm bg-danger-light">
                                                         <i class="feather-eye"></i>
                                                     </a>
                                                 </div>

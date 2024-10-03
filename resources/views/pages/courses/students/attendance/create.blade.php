@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Add Attendance')
+@section('title', 'Add Attendance ' . $course->name)
 
 @section('style')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
@@ -13,9 +13,9 @@
             <div class="row align-items-center">
                 <div class="col-sm-12">
                     <div class="page-sub-header">
-                        <h3 class="page-title">Add Attendance</h3>
+                        <h3 class="page-title">Record Attendance for : {{ $student->user->name }} | {{ $course->name }}</h3>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('attendance.index') }}">Attendance</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('show.attendance', ['course_id' => $course->id , 'student_id' => $student->id] ) }}">Attendance</a></li>
                             <li class="breadcrumb-item active">Add Attendance</li>
                         </ul>
                     </div>
@@ -27,35 +27,11 @@
             <div class="col-sm-12">
                 <div class="card comman-shadow">
                     <div class="card-body">
-                        <form id="attendanceForm" method="POST" action="{{ route('attendance.store') }}">
+                        <form id="attendanceForm" method="POST" action="{{ route('store.attendance') }}">
                             @csrf
                             <div class="row">
-                                <div class="col-12 col-sm-6">
-                                    <div class="form-group local-forms">
-                                        <label>Student <span class="login-danger">*</span></label>
-                                        <select class="form-control select" name="student_id">
-                                            <option value="">Select Student</option>
-                                            @foreach($students as $student)
-                                                <option value="{{ $student->id }}">{{ $student->user->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        <span class="text-danger error-text student_id_error"></span>
-                                    </div>
-                                </div>
-
-                                <div class="col-12 col-sm-6">
-                                    <div class="form-group local-forms">
-                                        <label>Course <span class="login-danger">*</span></label>
-                                        <select class="form-control select" name="course_id">
-                                            <option value="">Select Course</option>
-                                            @foreach($courses as $course)
-                                                <option value="{{ $course->id }}">{{ $course->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        <span class="text-danger error-text course_id_error"></span>
-                                    </div>
-                                </div>
-
+                                <input type="hidden" name="student_id" value="{{ $student->id }}" >
+                                <input type="hidden" name="course_id" value="{{ $course->id }}" >
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms">
                                         <label>Attendance Date <span class="login-danger">*</span></label>

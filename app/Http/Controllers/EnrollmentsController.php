@@ -71,47 +71,47 @@ class EnrollmentsController extends Controller
 
 
     public function update(Request $request, Enrollments $enrollment)
-{
-    $validator = Validator::make($request->all(), [
-        'student_id' => 'required|exists:students,id',
-        'course_id' => [
-            'required',
-            'exists:courses,id',
-            function ($attribute, $value, $fail) use ($request, $enrollment) {
-                $existingEnrollment = Enrollments::where('student_id', $request->student_id)
-                    ->where('course_id', $value)
-                    ->where('id', '!=', $enrollment->id)
-                    ->first();
-                if ($existingEnrollment) {
-                    $fail('This student is already enrolled in this course.');
-                }
-            },
-        ],
-        'enrollment_date' => 'required|date_format:d-m-Y',
-    ]);
+    {
+        $validator = Validator::make($request->all(), [
+            'student_id' => 'required|exists:students,id',
+            'course_id' => [
+                'required',
+                'exists:courses,id',
+                function ($attribute, $value, $fail) use ($request, $enrollment) {
+                    $existingEnrollment = Enrollments::where('student_id', $request->student_id)
+                        ->where('course_id', $value)
+                        ->where('id', '!=', $enrollment->id)
+                        ->first();
+                    if ($existingEnrollment) {
+                        $fail('This student is already enrolled in this course.');
+                    }
+                },
+            ],
+            'enrollment_date' => 'required|date_format:d-m-Y',
+        ]);
 
-    if ($validator->fails()) {
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation errors.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $enrollmentDate = Carbon::createFromFormat('d-m-Y', $request->enrollment_date)->format('Y-m-d');
+
+        $enrollment->update([
+            'student_id' => $request->student_id,
+            'course_id' => $request->course_id,
+            'enrollment_date' => $enrollmentDate,
+        ]);
+
         return response()->json([
-            'success' => false,
-            'message' => 'Validation errors.',
-            'errors' => $validator->errors(),
-        ], 422);
+            'success' => true,
+            'message' => 'Enrollment updated successfully.',
+            'redirect_url' => route('enrollment.index')
+        ]);
     }
-
-    $enrollmentDate = Carbon::createFromFormat('d-m-Y', $request->enrollment_date)->format('Y-m-d');
-
-    $enrollment->update([
-        'student_id' => $request->student_id,
-        'course_id' => $request->course_id,
-        'enrollment_date' => $enrollmentDate,
-    ]);
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Enrollment updated successfully.',
-        'redirect_url' => route('enrollment.index')
-    ]);
-}
 
 
     public function index()
@@ -138,8 +138,17 @@ class EnrollmentsController extends Controller
 
         $students = $course->enrollments;
 
-
         return view('pages.courses.students.list', compact('students', 'course'));
     }
+
+    public function getCourses($id)
+    {
+        $courses = Enrollments::where('student_id', $id)
+                    ->with('course')
+                    ->get();
+
+        return view('pages.parents.coures.list', compact('courses'));
+    }
+
 
 }

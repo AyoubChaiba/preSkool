@@ -6,9 +6,12 @@ use App\Models\User;
 use App\Models\Parents;
 use App\Events\UserCreated;
 use App\Events\UserUpdated;
+use App\Models\Students;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Flasher\Laravel\Facade\Flasher;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class ParentsController extends Controller
@@ -66,10 +69,11 @@ class ParentsController extends Controller
         ], 201);
     }
 
-    public function show($id)
-    {
-        $parent = Parents::with('user')->get();
-        return view('pages.parents.show', compact('parent'));
+    public function getChildern() {
+        if (Gate::allows('viewParent', Auth::user())) {
+            $children = Students::where('parent_id', Auth::user()->parent->id)->get();
+        }
+        return view('pages.parents.children', compact('children'));
     }
 
 
@@ -135,5 +139,6 @@ class ParentsController extends Controller
             'redirect_url' => route('parent.index'),
         ], 200);
     }
+
 
 }

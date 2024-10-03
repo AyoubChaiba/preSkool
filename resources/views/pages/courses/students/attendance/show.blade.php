@@ -47,16 +47,28 @@
                                     <th>Course</th>
                                     <th>Date</th>
                                     <th>Status</th>
+                                    @can("view" , Auth::user())
+                                        <th class="text-end">Action</th>
+                                    @endcan
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($attendances as $attendance)
                                     <tr>
                                         <td>{{ $attendance->id }}</td>
-                                        <td>{{ $attendance->student->name }}</td>
+                                        <td>{{ $attendance->student->user->name }}</td>
                                         <td>{{ $attendance->course->name }}</td>
                                         <td>{{ $attendance->attendance_date }}</td>
                                         <td>{{ ucfirst($attendance->status) }}</td>
+                                        @can('view', Auth::user())
+                                            <td>
+                                                <div class="actions">
+                                                    <a href="{{ route('edit.attendance', $attendance->id) }}" class="btn btn-sm bg-danger-light me-2">
+                                                        <i class="feather-edit"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        @endcan
                                     </tr>
                                 @endforeach
                             </tbody>
