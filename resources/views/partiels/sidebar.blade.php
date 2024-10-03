@@ -68,16 +68,28 @@
                     </li>
                 @endcan
 
-                <li class="submenu">
-                    <a href="#"><i class="fas fa-book-open"></i> <span> Courses</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="{{ route("course.index") }}">Courses List</a></li>
-                        @can('view', Auth::user())
-                            <li><a href="{{ route("course.create") }}">Courses Add</a></li>
-                        @endcan
-                    </ul>
-                </li>
+                @cannot("viewParent", Auth::user())
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-book-open"></i> <span> Courses</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="{{ route("course.index") }}">Courses List</a></li>
+                            @can('view', Auth::user())
+                                <li><a href="{{ route("course.create") }}">Courses Add</a></li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcannot
+
+                @can("viewParent", Auth::user())
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-child"></i> <span>Children </span> <span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="{{ route("parent.children") }}">Children List</a></li>
+                        </ul>
+                    </li>
+                @endcan
 
                 @can('viewAny', Auth::user())
                     <li class="submenu">
@@ -86,6 +98,54 @@
                         <ul>
                             <li><a href="{{ route("enrollment.index") }}">Enrollment List</a></li>
                             <li><a href="{{ route("enrollment.create") }}">Enrolments Add</a></li>
+                        </ul>
+                    </li>
+                @endcan
+
+                @cannot("view", Auth::user())
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-comment-dollar"></i> <span> Fees</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="{{ route("fees.index") }}">Fees List</a></li>
+                            @can('viewAny', Auth::user())
+                                <li><a href="{{ route("fees.create") }}">Fees Add</a></li>
+                            @endcan
+                        </ul>
+                    </li>
+                @elsecan('viewAny', Auth::user())
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-comment-dollar"></i> <span> Fees</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="{{ route("fees.index") }}">Fees List</a></li>
+                            @can('viewAny', Auth::user())
+                                <li><a href="{{ route("fees.create") }}">Fees Add</a></li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcannot
+
+
+                @can('view', Auth::user())
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> salaries</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="{{ route("salary.index") }}">salaries List</a></li>
+                            @can('viewAny', Auth::user())
+                                <li><a href="{{ route("salary.create") }}">salaries Add</a></li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcan
+
+                @can('view', Auth::user())
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-comment-dots"></i> <span> Messages</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="{{ route("messages.index") }}"> Messages List</a></li>
                         </ul>
                     </li>
                 @endcan

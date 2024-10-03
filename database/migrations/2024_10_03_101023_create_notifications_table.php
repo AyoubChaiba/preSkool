@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('students', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('parent_id')->constrained()->onDelete('cascade');
-            $table->date('admission_date');
+            $table->text('message');
+            $table->enum('type', ['email', 'sms', 'in-app']);
+            $table->enum('status', ['sent', 'pending']);
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('students');
+        Schema::dropIfExists('notifications');
     }
 };

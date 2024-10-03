@@ -23,11 +23,11 @@ class teachers extends Model
     }
 
     public function subject() {
-        return $this->belongsTo(Subjects::class);
+        return $this->belongsTo(Subjects::class, "subject_id");
     }
 
     public function courses() {
         return $this->hasMany(Courses::class, "teacher_id");
     }
-    
+
 }

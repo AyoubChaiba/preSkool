@@ -84,9 +84,11 @@ class TeachersController extends Controller
 
     public function update(Request $request, $id)
     {
+        $teacher = Teachers::findOrFail($id);
+
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $teacher->user->id],
             'hire_date' => ['required', 'date_format:d-m-Y'],
             'subject_id' => ['required', 'exists:subjects,id'],
         ]);
@@ -98,7 +100,7 @@ class TeachersController extends Controller
         }
 
         $hireDate = Carbon::createFromFormat('d-m-Y', $request->hire_date)->format('Y-m-d');
-        $teacher = Teachers::findOrFail($id);
+
         $teacher->user->update([
             'name' => $request->name,
             'email' => $request->email,

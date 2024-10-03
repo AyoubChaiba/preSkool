@@ -15,7 +15,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="page-sub-header">
-                        <h3 class="page-title">Courses</h3>
+                        <h3 class="page-title">Courses </h3>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ route('course.index') }}"> Courses</a></li>
                             <li class="breadcrumb-item active">All Courses</li>
@@ -58,7 +58,7 @@
                         <div class="page-header">
                             <div class="row align-items-center">
                                 <div class="col">
-                                    <h3 class="page-title">Courses</h3>
+                                    <h3 class="page-title">Courses </h3>
                                 </div>
                                 @can("view")
                                     <div class="col-auto text-end float-end ms-auto download-grp">
@@ -78,7 +78,7 @@
                                         <th>Teachers</th>
                                         @can('view', Auth::user())
                                             <th class="text-end">Action</th>
-                                        @elsecan('viewStudent', Auth::user())
+                                        @elsecan('viewParent', Auth::user())
                                             <th class="text-end">attendance</th>
                                             <th class="text-end">grades</th>
                                         @endcan
@@ -90,11 +90,11 @@
                                             <td>{{ $course->id }}</td>
                                             <td>
                                                 <h2 class="table-avatar">
-                                                    {{ $course->name }}
+                                                    {{ $course->course->name }}
                                                 </h2>
                                             </td>
-                                            <td>{{ $course->subject->name }}</td>
-                                            <td>{{ $course->teacher->user->name }}</td>
+                                            <td>{{ $course->course->subject->name }}</td>
+                                            <td>{{ $course->course->teacher->user->name }}</td>
                                                 @can('view', Auth::user())
                                                     <td class="text-end">
                                                         <div class="actions">
@@ -115,10 +115,10 @@
                                                             </a>
                                                         </div>
                                                     </td>
-                                                @elsecan('viewStudent', Auth::user())
+                                                @elsecan('viewParent', Auth::user())
                                                     <td class="text-end">
                                                         <div class="actions">
-                                                            <a href="{{ route('show.attendance', ['student_id' => Auth::user()->student->id, 'course_id' => $course->id]) }}" class="btn btn-sm bg-danger-light">
+                                                            <a href="{{ route('show.attendance', ['student_id' => $course->student->id , 'course_id' => $course->course->id]) }}" class="btn btn-sm bg-danger-light">
                                                                 <i class="feather-eye"></i>
                                                             </a>
 
@@ -126,7 +126,7 @@
                                                     </td>
                                                     <td class="text-end">
                                                         <div class="actions">
-                                                            <a href="{{ route('show.grade', ['student_id' => Auth::user()->student->id, 'course_id' => $course->id]) }}" class="btn btn-sm bg-danger-light">
+                                                            <a href="{{ route('show.grade', ['student_id' => $course->student->id, 'course_id' => $course->course->id]) }}" class="btn btn-sm bg-danger-light">
                                                                 <i class="feather-eye"></i>
                                                             </a>
                                                         </div>

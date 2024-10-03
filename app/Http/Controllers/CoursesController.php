@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Courses;
 use App\Models\Subjects;
 use App\Models\Teachers;
-use Flasher\Laravel\Facade\Flasher;
 use Illuminate\Http\Request;
+use Flasher\Laravel\Facade\Flasher;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class CoursesController extends Controller
@@ -18,9 +20,31 @@ class CoursesController extends Controller
      */
     public function index()
     {
-        $courses = Courses::all();
+
+        if (Gate::allows('viewTeacher' , Auth::user())) {
+            $teacherId = Auth::user()->teacher->id;
+            $courses = Courses::where('teacher_id', $teacherId)->get();
+        }
+        elseif (Gate::allows('viewStudent' , Auth::user())) {
+            $studentId = Auth::user()->student->id;
+            $courses = Courses::whereHas('enrollments', function ($query) use ($studentId) {
+                $query->where('student_id', $studentId);
+            })->get();
+        }
+        elseif (Gate::allows('viewParent' , Auth::user())) {
+            $parentId = Auth::user()->id;
+            $courses = Courses::whereHas('enrollments.student', function ($query) use ($parentId) {
+                $query->where('parent_id', $parentId);
+            })->get();
+        }
+        else {
+            $courses = Courses::all();
+        }
+
         return view('pages.courses.list', compact('courses'));
     }
+
+
 
     /**
      * Show the form for creating a new resource.

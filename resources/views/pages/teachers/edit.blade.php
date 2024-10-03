@@ -28,13 +28,14 @@
             <div class="col-sm-12">
                 <div class="card comman-shadow">
                     <div class="card-body">
-                        <form id="teacherForm" method="POST" action="{{ route('teacher.store') }}">
+                        <form id="teacherForm" method="POST" action="{{ route('teacher.update', $teacher->id) }}">
                             @csrf
+                            @method('PUT')
                             <div class="row">
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms">
                                         <label>Full Name <span class="login-danger">*</span></label>
-                                        <input class="form-control" type="text" name="name" placeholder="Enter full Name">
+                                        <input class="form-control" type="text" name="name" value="{{ $teacher->user->name }}" placeholder="Enter full Name">
                                         <span class="text-danger error-text name_error"></span>
                                     </div>
                                 </div>
@@ -42,7 +43,7 @@
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms">
                                         <label>Email <span class="login-danger">*</span></label>
-                                        <input class="form-control" type="email" name="email" placeholder="Enter Email">
+                                        <input class="form-control" type="email" name="email" value="{{ $teacher->user->email }}" placeholder="Enter Email">
                                         <span class="text-danger error-text email_error"></span>
                                     </div>
                                 </div>
@@ -53,7 +54,9 @@
                                         <select class="form-control select" name="subject_id">
                                             <option value="">Select Subject</option>
                                             @foreach($subjects as $subject)
-                                                <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                                <option value="{{ $subject->id }}" {{ $teacher->subject_id == $subject->id ? 'selected' : '' }}>
+                                                    {{ $subject->name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                         <span class="text-danger error-text subject_id_error"></span>
@@ -63,14 +66,14 @@
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms calendar-icon">
                                         <label>Hire date <span class="login-danger">*</span></label>
-                                        <input class="form-control datetimepicker" type="text" name="hire_date" placeholder="DD-MM-YYYY">
+                                        <input class="form-control datetimepicker" type="text" name="hire_date" value="{{ $teacher->hire_date }}" placeholder="DD-MM-YYYY">
                                         <span class="text-danger error-text hire_date_error"></span>
                                     </div>
                                 </div>
 
                                 <div class="col-12">
                                     <div class="student-submit">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="submit" class="btn btn-primary">Update</button>
                                     </div>
                                 </div>
                             </div>
@@ -119,11 +122,10 @@
                     type: 'POST',
                     data: formData,
                     success: function(response) {
-                        $('#teacherForm')[0].reset();
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Teacher created successfully!',
+                            text: 'Teacher updated successfully!',
                         }).then(() => {
                             window.location.href = response.redirect_url;
                         });
