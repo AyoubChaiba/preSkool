@@ -2,10 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Courses;
+use App\Models\Fees;
+use App\Models\Parents;
+use App\Models\Students;
+use App\Models\teachers;
+
 class DashboardController extends Controller
 {
     public function AdminDashboard() {
-        return view('pages/dashboard/dashboard-admin');
+        $studentsCount = Students::count();
+        $teachersCount = teachers::count();
+        $parentsCount = Parents::count();
+        $coursesCount = Courses::count();
+        $totalFees = Fees::sum('amount');
+        return view('pages/dashboard/dashboard-admin', compact('studentsCount', 'teachersCount', 'parentsCount', 'coursesCount','totalFees'));
     }
 
     public function StudentDashboard() {

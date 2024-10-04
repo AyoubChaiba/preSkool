@@ -5,10 +5,12 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CoursesController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentsController;
 use App\Http\Controllers\EnrollmentsController;
 use App\Http\Controllers\FeesController;
 use App\Http\Controllers\GradesController;
 use App\Http\Controllers\MessagesController;
+use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\ParentsController;
 use App\Http\Controllers\SalariesController;
 use App\Http\Controllers\StudentsController;
@@ -65,11 +67,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/subject', SubjectsController::class);
     Route::resource('/course', CoursesController::class);
 
-    // Route::middleware(["role:admin,parent"])->group(function () {
-    //     Route::get('/parent/children', [ParentsController::class, "getChildern"])->name("parent.children");
-    //     Route::resource('/parent', ParentsController::class);
-    // });
-
     Route::get('/parent/children', [ParentsController::class, "getChildern"])->name("parent.children");
     Route::get('/courses/{id}/child', [EnrollmentsController::class, "getCourses"])->name("courses.child");
     Route::resource('/parent', ParentsController::class);
@@ -102,6 +99,12 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/messages/{id}', [MessagesController::class, 'destroy'])->name('messages.destroy');
 
     Route::post('/send-message', [MessagesController::class, 'sendMessage'])->name('message.send');
+
+    Route::get('/notifications', [NotificationsController::class, 'getNotifications'])->name('notifications.get');
+
+
+    Route::resource("/documents", DocumentsController::class);
+
 
 
 
