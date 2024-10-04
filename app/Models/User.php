@@ -70,4 +70,10 @@ class User extends Authenticatable
         return $this->hasManyThrough(Courses::class, Enrollments::class, 'student_id', 'id', 'id', 'course_id');
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(Notifications::class);
+    }
+
+
 }

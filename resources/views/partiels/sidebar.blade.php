@@ -126,6 +126,15 @@
                     </li>
                 @endcannot
 
+                <li class="submenu">
+                    <a href="#"><i class="fas fa-comment-dots"></i> <span> documents</span> <span
+                            class="menu-arrow"></span></a>
+                    <ul>
+                        <li><a href="{{ route("documents.index") }}"> documents List</a></li>
+                        <li><a href="{{ route("documents.create") }}"> documents Add</a></li>
+                    </ul>
+                </li>
+
 
                 @can('view', Auth::user())
                     <li class="submenu">
@@ -150,65 +159,6 @@
                     </li>
                 @endcan
 
-{{--
-                <li class="submenu">
-                    <a href="#"><i class="fas fa-clipboard"></i> <span> Invoices</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="invoices.html">Invoices List</a></li>
-                        <li><a href="invoice-grid.html">Invoices Grid</a></li>
-                        <li><a href="add-invoice.html">Add Invoices</a></li>
-                        <li><a href="edit-invoice.html">Edit Invoices</a></li>
-                        <li><a href="view-invoice.html">Invoices Details</a></li>
-                        <li><a href="invoices-settings.html">Invoices Settings</a></li>
-                    </ul>
-                </li>
-                <li class="menu-title">
-                    <span>Management</span>
-                </li>
-                <li class="submenu">
-                    <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Accounts</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="fees-collections.html">Fees Collection</a></li>
-                        <li><a href="expenses.html">Expenses</a></li>
-                        <li><a href="salary.html">Salary</a></li>
-                        <li><a href="add-fees-collection.html">Add Fees</a></li>
-                        <li><a href="add-expenses.html">Add Expenses</a></li>
-                        <li><a href="add-salary.html">Add Salary</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="holiday.html"><i class="fas fa-holly-berry"></i> <span>Holiday</span></a>
-                </li>
-                <li>
-                    <a href="fees.html"><i class="fas fa-comment-dollar"></i> <span>Fees</span></a>
-                </li>
-                <li>
-                    <a href="exam.html"><i class="fas fa-clipboard-list"></i> <span>Exam list</span></a>
-                </li>
-                <li>
-                    <a href="event.html"><i class="fas fa-calendar-day"></i> <span>Events</span></a>
-                </li>
-                <li>
-                    <a href="time-table.html"><i class="fas fa-table"></i> <span>Time Table</span></a>
-                </li>
-                <li>
-                    <a href="library.html"><i class="fas fa-book"></i> <span>Library</span></a>
-                </li>
-                <li class="submenu">
-                    <a href="#"><i class="fa fa-newspaper"></i> <span> Blogs</span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <ul>
-                        <li><a href="blog.html">All Blogs</a></li>
-                        <li><a href="add-blog.html">Add Blog</a></li>
-                        <li><a href="edit-blog.html">Edit Blog</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="settings.html"><i class="fas fa-cog"></i> <span>Settings</span></a>
-                </li> --}}
             </ul>
         </div>
     </div>

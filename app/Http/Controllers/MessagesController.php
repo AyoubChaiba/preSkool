@@ -40,4 +40,10 @@ class MessagesController extends Controller
             'message' => 'Message sent and notification created successfully!',
         ]);
     }
+
+    public function show($id)
+    {
+        $message = Messages::findOrFail($id);
+        return view('pages.messages.show', compact('message'));
+    }
 }

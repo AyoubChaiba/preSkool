@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'User Messages')
+@section('title', 'User Documents')
 
 @section("style")
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/datatables.min.css') }}">
@@ -15,10 +15,10 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="page-sub-header">
-                        <h3 class="page-title">Messages</h3>
+                        <h3 class="page-title">Documents</h3>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('messages.index') }}">Messages</a></li>
-                            <li class="breadcrumb-item active">All Messages</li>
+                            <li class="breadcrumb-item"><a href="{{ route('documents.index') }}">Documents</a></li>
+                            <li class="breadcrumb-item active">All Documents</li>
                         </ul>
                     </div>
                 </div>
@@ -33,48 +33,47 @@
                         <div class="page-header">
                             <div class="row align-items-center">
                                 <div class="col">
-                                    <h3 class="page-title">Messages</h3>
+                                    <h3 class="page-title">Documents</h3>
                                 </div>
                                 <div class="col-auto text-end float-end ms-auto download-grp">
-                                    <a href="{{ route('messages.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+                                    <a href="{{ route('documents.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
                                 </div>
                             </div>
                         </div>
 
                         <div class="table-responsive">
                             <table class="table border-0 table-hover table-center mb-0 datatable table-striped">
-                                <thead class="student-thread">
+                                <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Sender</th>
-                                        <th>Receiver</th>
-                                        <th>Content</th>
-                                        <th>Sent At</th>
+                                        <th>File Name</th>
+                                        <th>Uploaded By</th>
+                                        <th>Upload Date</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($messages as $message)
+                                    @foreach ($documents as $document)
                                         <tr>
-                                            <td>{{ $message->id }}</td>
-                                            <td>{{ $message->sender->name }}</td>
-                                            <td>{{ $message->receiver->name }}</td>
-                                            <td>{{ Str::limit($message->content, 50) }}</td>
-                                            <td>{{ $message->created_at->format('Y-m-d H:i') }}</td>
+                                            <td>{{ $document->id }}</td>
+                                            <td>{{ basename($document->file_path) }}</td>
+                                            <td>{{ $document->user->name }}</td>
+                                            <td>{{ $document->created_at->format('d M Y') }}</td>
                                             <td class="text-end">
                                                 <div class="actions">
-                                                    <a href="{{ route('messages.show', $message->id) }}" class="btn btn-sm bg-primary-light me-2">
-                                                        <i class="feather-eye"></i>
+                                                    <a href="{{ route('documents.edit', $document->id) }}" class="btn btn-sm bg-info-light me-2">
+                                                        <i class="feather-edit"></i>
                                                     </a>
-                                                    @can('viewAny', Auth::user())
-                                                        <form action="{{ route('messages.destroy', $message->id) }}" method="POST" style="display: inline;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm bg-danger-light btn-delete" aria-label="Delete">
-                                                                <i class="feather-trash"></i>
-                                                            </button>
-                                                        </form>
-                                                    @endcan
+                                                    <form action="{{ route('documents.destroy', $document->id) }}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm bg-warning-light me-2" aria-label="Delete">
+                                                            <i class="feather-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                    <a href="{{ asset($document->file_path) }}" class="btn btn-sm bg-info-light" download>
+                                                        <i class="feather-download"></i>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>
@@ -92,8 +91,8 @@
 @endsection
 
 @section('js-content')
-    <script src="{{ asset('assets/plugins/datatables/datatables.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ asset('assets/plugins/datatables/datatables.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
     $(document).ready(function() {
@@ -105,7 +104,7 @@
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You won't be able to revert this!",
+                text: "This document will be permanently deleted!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, delete it!',
@@ -123,7 +122,7 @@
                             button.closest('tr').fadeOut();
                             Swal.fire({
                                 title: 'Deleted!',
-                                text: 'Message deleted successfully!',
+                                text: 'Document deleted successfully!',
                                 icon: 'success',
                                 confirmButtonText: 'OK'
                             });
@@ -131,7 +130,7 @@
                         error: function(error) {
                             Swal.fire({
                                 title: 'Error!',
-                                text: 'Error deleting message.',
+                                text: 'Error deleting the document.',
                                 icon: 'error',
                                 confirmButtonText: 'OK'
                             });
@@ -140,7 +139,6 @@
                 }
             });
         });
-
     });
     </script>
 @endsection
