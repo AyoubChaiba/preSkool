@@ -99,10 +99,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/messages/create', [MessagesController::class, 'create'])->name('messages.create');
     Route::post('/messages', [MessagesController::class, 'store'])->name('messages.store');
 
-    Route::get('/messages/{id}/edit', [MessagesController::class, 'edit'])->name('messages.edit');
-    Route::put('/messages/{id}', [MessagesController::class, 'update'])->name('messages.update');
-
     Route::delete('/messages/{id}', [MessagesController::class, 'destroy'])->name('messages.destroy');
+
+    Route::post('/send-message', [MessagesController::class, 'sendMessage'])->name('message.send');
+
 
 
 
