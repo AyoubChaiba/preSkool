@@ -91,19 +91,19 @@
                                             <td>{{ $parent->user->email }}</td>
                                             <td class="text-end">
                                                 <div class="actions">
-                                                    {{-- <a href="{{ route('parent.show', $parent->id) }}" class="btn btn-sm bg-success-light me-2">
-                                                        <i class="feather-eye"></i>
-                                                    </a> --}}
                                                     <a href="{{ route('parent.edit', $parent->id) }}" class="btn btn-sm bg-danger-light me-2">
                                                         <i class="feather-edit"></i>
                                                     </a>
                                                     <form action="{{ route('parent.destroy', $parent->id) }}" method="POST" style="display: inline;">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm bg-danger-light btn-delete" aria-label="Delete">
+                                                        <button type="submit" class="btn btn-sm bg-danger-light btn-delete me-2" aria-label="Delete">
                                                             <i class="feather-trash"></i>
                                                         </button>
                                                     </form>
+                                                    <button type="button" class="btn btn-sm bg-info-light btn-send-message" data-parent-id="{{ $parent->user->id }}">
+                                                        <i class="feather-send"></i> Send Message
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -163,6 +163,41 @@
                                 icon: 'error',
                                 confirmButtonText: 'OK'
                             });
+                        }
+                    });
+                }
+            });
+        });
+
+        $('.btn-send-message').click(function(e) {
+            e.preventDefault();
+            const parentId = $(this).data('parent-id');
+
+            Swal.fire({
+                title: 'Send Message',
+                input: 'textarea',
+                inputLabel: 'Message',
+                inputPlaceholder: 'Type your message here...',
+                showCancelButton: true,
+                confirmButtonText: 'Send',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const message = result.value;
+
+                    $.ajax({
+                        url: '{{ route('message.send') }}',
+                        type: 'POST',
+                        data: {
+                            receiver_id: parentId,
+                            content: message,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            Swal.fire('Sent!', 'Message sent successfully!', 'success');
+                        },
+                        error: function(error) {
+                            Swal.fire('Error!', 'Failed to send the message.', 'error');
                         }
                     });
                 }

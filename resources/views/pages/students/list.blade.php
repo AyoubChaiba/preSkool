@@ -25,31 +25,6 @@
             </div>
         </div>
 
-        {{-- <div class="student-group-form">
-            <div class="row">
-                <div class="col-lg-3 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search by ID ..." id="search-id">
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search by Name ..." id="search-name">
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search by Phone ..." id="search-phone">
-                    </div>
-                </div>
-                <div class="col-lg-2">
-                    <div class="search-student-btn">
-                        <button type="button" id="search-button" class="btn btn-primary">Search</button>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
         <div class="row">
             <div class="col-sm-12">
                 <div class="card card-table comman-shadow">
@@ -73,8 +48,8 @@
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Email</th>
-                                        <th>date admission</th>
-                                        <th>parent</th>
+                                        <th>Date of Admission</th>
+                                        <th>Parent</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
@@ -95,19 +70,19 @@
                                             <td>{{ $student->parent->user->name }}</td>
                                             <td class="text-end">
                                                 <div class="actions">
-                                                    {{-- <a href="{{ route('student.show', $student->id) }}" class="btn btn-sm bg-success-light me-2">
-                                                        <i class="feather-eye"></i>
-                                                    </a> --}}
                                                     <a href="{{ route('student.edit', $student->id) }}" class="btn btn-sm bg-danger-light me-2">
                                                         <i class="feather-edit"></i>
                                                     </a>
                                                     <form action="{{ route('student.destroy', $student->id) }}" method="POST" style="display: inline;">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm bg-danger-light btn-delete" aria-label="Delete">
+                                                        <button type="submit" class="btn btn-sm bg-danger-light btn-delete me-2" aria-label="Delete">
                                                             <i class="feather-trash"></i>
                                                         </button>
                                                     </form>
+                                                    <button type="button" class="btn btn-sm bg-info-light btn-send-message" data-student-id="{{ $student->user->id }}" >
+                                                        <i class="feather-send"></i> Send Message
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -174,15 +149,40 @@
             });
         });
 
-
-        $('#search-button').click(function(e) {
+        $('.btn-send-message').click(function(e) {
             e.preventDefault();
 
-            const searchData = {
-                id: $('#search-id').val(),
-                name: $('#search-name').val(),
-                phone: $('#search-phone').val(),
-            };
+            const studentId = $(this).data('student-id');
+
+            Swal.fire({
+                title: 'Send Message',
+                input: 'textarea',
+                inputLabel: 'Message',
+                inputPlaceholder: 'Type your message here...',
+                showCancelButton: true,
+                confirmButtonText: 'Send',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const message = result.value;
+
+                    $.ajax({
+                        url: '{{ route('message.send') }}',
+                        type: 'POST',
+                        data: {
+                            receiver_id: studentId,
+                            content: message,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            Swal.fire('Sent!', 'Message sent successfully!', 'success');
+                        },
+                        error: function(error) {
+                            Swal.fire('Error!', 'Failed to send the message.', 'error');
+                        }
+                    });
+                }
+            });
         });
     });
     </script>

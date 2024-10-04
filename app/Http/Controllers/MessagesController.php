@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Messages;
 use App\Models\Notifications;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MessagesController extends Controller
 {
@@ -12,6 +13,7 @@ class MessagesController extends Controller
         $messages = Messages::where('receiver_id', auth()->id())->orWhere('sender_id', auth()->id())->get();
         return view('pages.messages.list', compact('messages'));
     }
+
     public function sendMessage(Request $request)
     {
         $request->validate([
@@ -19,7 +21,7 @@ class MessagesController extends Controller
             'content' => 'required|string',
         ]);
 
-        $senderId = auth()->id();
+        $senderId = Auth::user()->id;
 
         $message = Messages::create([
             'sender_id' => $senderId,
