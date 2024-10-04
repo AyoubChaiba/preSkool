@@ -86,21 +86,6 @@
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Students Performance</h3>
-                </div>
-                <div class="card-body">
-                    <div class="chart">
-                        <canvas id="chart-area"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 @endsection
 

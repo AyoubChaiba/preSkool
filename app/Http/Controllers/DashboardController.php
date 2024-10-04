@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Courses;
 use App\Models\Fees;
 use App\Models\Parents;
+use App\Models\Salaries;
 use App\Models\Students;
 use App\Models\teachers;
 
@@ -24,7 +25,15 @@ class DashboardController extends Controller
     }
 
     public function TeacherDashboard() {
-        return view('pages/dashboard/dashboard-teacher');
+        $teacherId = auth()->user()->id;
+        $teacher = Teachers::where('user_id', $teacherId)->first();
+
+        $assignedCourses = Courses::where('teacher_id', $teacher->id)->get();
+        $salary = Salaries::where('teacher_id', $teacher->id)->sum('amount');
+        $pendingSalary = Salaries::where('teacher_id', $teacher->id)->where('status', 'pending')->sum('amount');
+        $studentsCount = Courses::where('teacher_id', $teacher->id)->count();
+
+        return view('pages/dashboard/dashboard-teacher', compact('assignedCourses', 'salary', 'pendingSalary','studentsCount'));
     }
 
     public function ParentDashboard() {
