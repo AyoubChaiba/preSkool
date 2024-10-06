@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Courses;
+use App\Models\Enrollments;
 use App\Models\Fees;
 use App\Models\Parents;
 use App\Models\Salaries;
@@ -12,7 +13,7 @@ use App\Models\teachers;
 class DashboardController extends Controller
 {
     public function AdminDashboard() {
-        
+
         $studentsCount = Students::count();
         $teachersCount = teachers::count();
         $parentsCount = Parents::count();
@@ -23,7 +24,13 @@ class DashboardController extends Controller
     }
 
     public function StudentDashboard() {
-        return view('pages/dashboard/dashboard-student');
+        $studentId = auth()->user()->id;
+        $student = Students::where('user_id', $studentId)->first();
+        $coursesCount = Enrollments::where('student_id', $student->id)->count();
+        $totalFees = Fees::where('student_id', $student->id)->where('status', 'paid')->sum('amount');
+        $pendingFees = Fees::where('student_id', $student->id)->where('status', 'pending')->sum('amount');
+
+        return view('pages/dashboard/dashboard-student', compact('coursesCount', 'totalFees', 'pendingFees'));
     }
 
     public function TeacherDashboard() {
@@ -40,7 +47,13 @@ class DashboardController extends Controller
     }
 
     public function ParentDashboard() {
-        return view('pages/dashboard/dashboard-parent');
+        $parentId = auth()->user()->id;
+        $parent = Parents::where('user_id', $parentId)->first();
+        $childrenCount = Students::where('parent_id', $parent->id)->count();
+        $totalFees = Parents::where('id', $parent)->where('status', 'paid')->sum('amount');
+        $pendingFees = Fees::where('parent_id', $parent->id)->where('status', 'pending')->sum('amount');
+
+        return view('pages/dashboard/dashboard-parent', compact('childrenCount', 'totalFees', 'pendingFees'));
     }
 
 }
