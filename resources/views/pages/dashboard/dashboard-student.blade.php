@@ -31,7 +31,7 @@
                     <div class="db-widgets d-flex justify-content-between align-items-center">
                         <div class="db-info">
                             <h6>All Courses</h6>
-                            <h3>04/06</h3>
+                            <h3>{{ $coursesCount }}</h3>
                         </div>
                         <div class="db-icon">
                             <img src="{{asset("assets/img/icons/teacher-icon-01.svg")}}" alt="Dashboard Icon">
@@ -40,46 +40,33 @@
                 </div>
             </div>
         </div>
+
         <div class="col-xl-3 col-sm-6 col-12 d-flex">
             <div class="card bg-comman w-100">
                 <div class="card-body">
                     <div class="db-widgets d-flex justify-content-between align-items-center">
                         <div class="db-info">
-                            <h6>All Projects</h6>
-                            <h3>40/60</h3>
+                            <h6>Total fees</h6>
+                            <h3>${{ number_format($totalFees, 2) }}</h3>
                         </div>
                         <div class="db-icon">
-                            <img src="{{asset("assets/img/icons/teacher-icon-02.svg")}}" alt="Dashboard Icon">
+                            <img src="{{asset("assets/img/icons/dash-icon-04.svg")}}" alt="Dashboard Icon">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="col-xl-3 col-sm-6 col-12 d-flex">
             <div class="card bg-comman w-100">
                 <div class="card-body">
                     <div class="db-widgets d-flex justify-content-between align-items-center">
                         <div class="db-info">
-                            <h6>Test Attended</h6>
-                            <h3>30/50</h3>
+                            <h6>Pending Fees</h6>
+                            <h3>${{ number_format($pendingFees, 2) }}</h3>
                         </div>
                         <div class="db-icon">
-                            <img src="{{asset("assets/img/icons/student-icon-01.svg")}}" alt="Dashboard Icon">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-comman w-100">
-                <div class="card-body">
-                    <div class="db-widgets d-flex justify-content-between align-items-center">
-                        <div class="db-info">
-                            <h6>Test Passed</h6>
-                            <h3>15/20</h3>
-                        </div>
-                        <div class="db-icon">
-                            <img src="{{asset("assets/img/icons/student-icon-02.svg")}}" alt="Dashboard Icon">
+                            <img src="{{ asset('assets/img/icons/dash-icon-04.svg') }}" alt="Pending Salary Dashboard Icon">
                         </div>
                     </div>
                 </div>
