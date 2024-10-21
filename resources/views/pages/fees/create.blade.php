@@ -37,7 +37,7 @@
                                         <select class="form-control select" name="student_id">
                                             <option value="">Select Student</option>
                                             @foreach($students as $student)
-                                                <option value="{{ $student->id }}">{{ $student->user->name }}</option>
+                                                <option value="{{ $student->id }}">{{ $student->name }}</option>
                                             @endforeach
                                         </select>
                                         <span class="text-danger error-text student_id_error"></span>
@@ -51,7 +51,6 @@
                                             <option value="">Select Fee Type</option>
                                             <option value="paid">Paid</option>
                                             <option value="pending">Pending</option>
-                                            <option value="overdue">Overdue</option>
                                         </select>
                                         <span class="text-danger error-text status_error"></span>
                                     </div>
@@ -67,8 +66,8 @@
 
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms calendar-icon">
-                                        <label>Due Date <span class="login-danger">*</span></label>
-                                        <input class="form-control datetimepicker" type="text" name="due_date" placeholder="DD-MM-YYYY">
+                                        <label>Payment Date <span class="login-danger">*</span></label>
+                                        <input class="form-control datetimepicker" type="text" id="date" name="payment_date" placeholder="DD-MM-YYYY">
                                         <span class="text-danger error-text due_date_error"></span>
                                     </div>
                                 </div>

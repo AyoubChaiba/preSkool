@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Flasher\Laravel\Facade\Flasher;
 use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
@@ -15,7 +14,6 @@ class AdminController extends Controller
         return view('pages.admin.list', compact('admins'));
     }
 
-
     public function create()
     {
         return view('pages.admin.create');
@@ -24,45 +22,29 @@ class AdminController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:8']
         ]);
 
         if ($validator->fails()) {
-            Flasher::error('Please fix the following errors:');
-            foreach ($validator->errors()->all() as $error) {
-                Flasher::error($error);
-            }
-
             return response()->json([
-                'error' => $validator->errors()
+                'errors' => $validator->errors()
             ], 400);
         }
 
-        $user = User::create([
-            'name' => $request->name,
+        User::create([
+            'username' => $request->username,
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'role' => 'admin',
         ]);
-
-        Flasher::addSuccess($user->name . ' has been created successfully! Role: ' . $user->role);
 
         return response()->json([
             'success' => true,
             'redirect_url' => route('admin.index')
         ], 201);
     }
-
-
-
-    public function show($id)
-    {
-        $admin = User::findOrFail($id);
-        return view('pages.admin.show', compact('admin'));
-    }
-
 
     public function edit($id)
     {
@@ -71,30 +53,23 @@ class AdminController extends Controller
         return view('pages.admin.edit', compact('admin'));
     }
 
-
     public function update(Request $request, $id)
     {
         $admin = User::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $admin->id],
             'password' => ['nullable', 'string', 'min:8'],
         ]);
 
         if ($validator->fails()) {
-            Flasher::error('Please fix the following errors:');
-            foreach ($validator->errors()->all() as $error) {
-                Flasher::error($error);
-            }
-
             return response()->json([
-                'error' => $validator->errors()
+                'errors' => $validator->errors()
             ], 400);
         }
 
-
-        $admin->name = $request->name;
+        $admin->username = $request->username;
         $admin->email = $request->email;
 
         if ($request->filled('password')) {
@@ -103,20 +78,15 @@ class AdminController extends Controller
 
         $admin->save();
 
-        Flasher::addSuccess($admin->name . ' has been updated successfully!');
-
         return response()->json([
             'success' => true,
             'redirect_url' => route('admin.index')
         ], 200);
     }
 
-
-
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-
         $user->delete();
 
         return response()->json([

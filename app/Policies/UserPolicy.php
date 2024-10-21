@@ -11,22 +11,19 @@ class UserPolicy
         return $user->role === "admin";
     }
 
-    public function viewTeacher(User $user)
-    {
-        return $user->role === "teacher";
-    }
-
-    public function viewStudent(User $user){
-        return $user->role === "student";
-    }
-
-    public function viewParent(User $user){
-        return $user->role === "parent";
-    }
-
     public function view(User $user, User $model)
     {
         return $user->role === "admin" || $user->role === "teacher";
+    }
+
+    public function viewStudent(User $user, User $model)
+    {
+        return $user->role === "admin" || $user->role === "student";
+    }
+
+    public function viewParent(User $user, User $model)
+    {
+        return $user->role === "admin" || $user->role === "parent";
     }
 
     public function update(User $user, User $model)

@@ -2,134 +2,139 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\UserCreated;
-use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\Classes;
 use App\Models\Subjects;
 use App\Models\Teachers;
-use App\Models\User;
-use Flasher\Laravel\Facade\Flasher;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class TeachersController extends Controller
 {
-    public function index() {
-        $teachers = Teachers::withCount('courses')->get();
-
-        return view('pages.teachers.list', compact('teachers'));
+    /**
+     * Display a listing of the teachers.
+     */
+    public function index()
+    {
+        $teachers = Teachers::with('user')->get();
+        return view('pages.teachers.index', compact('teachers'));
     }
 
+    /**
+     * Show the form for creating a new teacher.
+     */
     public function create()
     {
-        $subjects = Subjects::all();
-        return view('pages.teachers.create', compact('subjects'));
+        $classes = Classes::all();
+
+        return view('pages.teachers.create', compact('classes'));
     }
 
+    /**
+     * Store a newly created teacher in storage.
+     */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'hire_date' => ['required', 'date_format:d-m-Y'],
-            'subject_id' => ['required', 'exists:subjects,id'],
-        ]);
-
-        if ($validator->fails()) {
-            Flasher::error('Please fix the following errors:');
-            foreach ($validator->errors()->all() as $error) {
-                Flasher::error($error);
-            }
-
-            return response()->json([
-                'error' => $validator->errors()
-            ], 400);
-        }
-
-        $hireDate = Carbon::createFromFormat('d-m-Y', $request->hire_date)->format('Y-m-d');
-        $password = Str::random(10);
+        $validated = $this->validateTeacher($request);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($password),
+            'username' => $validated['username'],
+            'email' => $validated['email'],
             'role' => 'teacher',
+            'password' => Hash::make($validated['password']),
         ]);
 
-        if ($user->role === 'teacher') {
-            Teachers::create([
-                'user_id' => $user->id,
-                'hire_date' => $hireDate,
-                'subject_id' => $request->subject_id,
-            ]);
-        }
+        $this->createTeacherRecord($user->id, $validated);
 
-        event(new UserCreated($user, $password, $request->role));
-
-        Flasher::addSuccess($user->name . ' has been created successfully! Role: ' . $user->role);
-
-        return response()->json([
-            'success' => true,
-            'redirect_url' => route('teacher.index')
-        ], 201);
+        return response()->json(['redirect_url' => route('teacher.index')], 201);
     }
 
+    /**
+     * Show the form for editing the specified teacher.
+     */
     public function edit($id)
     {
-        $teacher = Teachers::findOrFail($id);
-        $subjects = Subjects::all();
-        return view('pages.teachers.edit', compact('teacher', 'subjects'));
+        $teacher = Teachers::with('user')->findOrFail($id);
+        $classes = Classes::all();
+        $subjects = Subjects::where('class_id', $teacher->class_id)->get();
+
+        return view('pages.teachers.edit', compact('teacher', 'classes', 'subjects'));
     }
 
+    /**
+     * Update the specified teacher in storage.
+     */
     public function update(Request $request, $id)
     {
-        $teacher = Teachers::findOrFail($id);
+        $teacher = Teachers::with('user')->findOrFail($id);
+        $validated = $this->validateTeacher($request, $teacher->user->id);
 
-        $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $teacher->user->id],
-            'hire_date' => ['required', 'date_format:d-m-Y'],
-            'subject_id' => ['required', 'exists:subjects,id'],
-        ]);
+        $teacher->update($this->prepareTeacherData($validated));
 
-        if ($validator->fails()) {
-            return response()->json([
-                'error' => $validator->errors()
-            ], 400);
+        if (isset($validated['password']) && !empty($validated['password'])) {
+            $teacher->user->update(['password' => Hash::make($validated['password'])]);
         }
 
-        $hireDate = Carbon::createFromFormat('d-m-Y', $request->hire_date)->format('Y-m-d');
-
-        $teacher->user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
-
-        $teacher->update([
-            'hire_date' => $hireDate,
-            'subject_id' => $request->subject_id,
-        ]);
-
-        Flasher::addSuccess('Teacher updated successfully!');
-
-        return response()->json([
-            'success' => true,
-            'redirect_url' => route('teacher.index')
-        ], 200);
+        return response()->json(['redirect_url' => route('teacher.index')], 201);
     }
 
+    /**
+     * Remove the specified teacher from storage.
+     */
     public function destroy($id)
     {
         $teacher = Teachers::findOrFail($id);
-        $teacher->user->delete();
+        $teacher->user()->delete();
         $teacher->delete();
 
-        Flasher::addSuccess('Teacher deleted successfully!');
-
-        return response()->json([
-            'success' => true,
-            'redirect_url' => route('teacher.index')
-        ], 200);
+        return response()->json(['message' => 'Teacher deleted successfully.'], 200);
     }
+
+    /**
+     * Validate the teacher request data.
+     */
+    private function validateTeacher(Request $request, $userId = null)
+    {
+        return $request->validate([
+            'email' => "required|email|unique:users,email," . ($userId ?? 'NULL'),
+            'username' => "required|string|unique:users,username," . ($userId ?? 'NULL'),
+            'phone_number' => 'required|string|max:15',
+            'subject_id' => 'required|exists:subjects,id',
+            'class_id' => 'required|exists:classes,id',
+            'hire_date' => 'required|date',
+            'password' => $userId ? 'nullable|string|min:6' : 'required|string|min:6',
+        ]);
+    }
+
+    /**
+     * Prepare the teacher data for storage.
+     */
+    private function prepareTeacherData(array $validated)
+    {
+        $validated['hire_date'] = \DateTime::createFromFormat('d-m-Y', $validated['hire_date'])->format('Y-m-d');
+
+        return [
+            'name' => $validated['username'],
+            'phone_number' => $validated['phone_number'],
+            'class_id' => $validated['class_id'],
+            'subject_id' => $validated['subject_id'],
+            'hire_date' => $validated['hire_date'],
+        ];
+    }
+
+    /**
+     * Create a new teacher record.
+     */
+    private function createTeacherRecord($userId, array $validated)
+    {
+        Teachers::create(array_merge($this->prepareTeacherData($validated), ['user_id' => $userId]));
+    }
+
+    public function getSubjects($classId)
+    {
+        $subjects = Classes::findOrFail($classId)->subjects;
+
+        return response()->json($subjects);
+    }
+
 }

@@ -1,272 +1,136 @@
-@extends("layouts.app")
+@extends('layouts.app')
 
-@section("title", "Admin Dashboard")
+@section('title', 'Parent Dashboard')
 
-@section("style")
-
-@endsection
-
-@section("main")
+@section('main')
 <div class="content container-fluid">
 
+    <!-- Dashboard Header -->
     <div class="page-header">
         <div class="row">
             <div class="col-sm-12">
                 <div class="page-sub-header">
-                    <h3 class="page-title">Welcome Admin!</h3>
+                    <h3 class="page-title">Welcome to the Parent Dashboard!</h3>
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route(Auth::user()->role . ".dashboard")}}">Home</a></li>
-                        <li class="breadcrumb-item active">{{Auth::user()->role}}</li>
+                        <li class="breadcrumb-item"><a href="{{ route('parent.dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item active">Dashboard</li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 
-
+    <!-- Children Overview -->
     <div class="row">
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-comman w-100">
-                <div class="card-body">
-                    <div class="db-widgets d-flex justify-content-between align-items-center">
-                        <div class="db-info">
-                            <h6>All children</h6>
-                            <h3>{{ $childrenCount }}</h3>
-                        </div>
-                        <div class="db-icon">
-                            <img src="{{asset("assets/img/icons/teacher-icon-01.svg")}}" alt="Dashboard Icon">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @forelse ($children as $child)
+            <div class="col-xl-3 col-sm-6 col-12 d-flex">
+                <div class="card bg-light w-100">
+                    <div class="card-body">
+                        <div class="db-widgets d-flex justify-content-between align-items-center">
+                            <div class="db-info">
+                                <h6>{{ $child->name }}</h6>
+                                <p><strong>Grade:</strong> {{ $child->class->class_name }}</p>
+                                <p><strong>Total Fees Paid:</strong> ${{ number_format($child->fees->where('status', 'paid')->sum('amount'), 2) }}</p>
 
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-comman w-100">
-                <div class="card-body">
-                    <div class="db-widgets d-flex justify-content-between align-items-center">
-                        <div class="db-info">
-                            <h6>Total fees</h6>
-                            <h3>${{ number_format($totalFees, 2) }}</h3>
-                        </div>
-                        <div class="db-icon">
-                            <img src="{{asset("assets/img/icons/dash-icon-04.svg")}}" alt="Dashboard Icon">
+                            </div>
+                            <div class="db-icon">
+                                <i class="fas fa-child"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-comman w-100">
-                <div class="card-body">
-                    <div class="db-widgets d-flex justify-content-between align-items-center">
-                        <div class="db-info">
-                            <h6>Pending Fees</h6>
-                            <h3>${{ number_format($pendingFees, 2) }}</h3>
-                        </div>
-                        <div class="db-icon">
-                            <img src="{{ asset('assets/img/icons/dash-icon-04.svg') }}" alt="Pending Salary Dashboard Icon">
-                        </div>
-                    </div>
-                </div>
+        @empty
+            <div class="col-12">
+                <p>No children data available.</p>
             </div>
-        </div>
+        @endforelse
     </div>
 
+    <!-- Children Grades -->
     <div class="row">
-        <div class="col-xl-6 d-flex">
-
-            <div class="card flex-fill student-space comman-shadow">
-                <div class="card-header d-flex align-items-center">
-                    <h5 class="card-title">Star Students</h5>
-                    <ul class="chart-list-out student-ellips">
-                        <li class="star-menus"><a href="javascript:;"><i class="fas fa-ellipsis-v"></i></a>
-                        </li>
-                    </ul>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Children's Grades</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table
-                            class="table star-student table-hover table-center table-borderless table-striped">
-                            <thead class="thead-light">
+                        <table class="table table-bordered">
+                            <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th class="text-center">Marks</th>
-                                    <th class="text-center">Percentage</th>
-                                    <th class="text-end">Year</th>
+                                    <th>Child</th>
+                                    <th>Subject</th>
+                                    <th>Grade</th>
+                                    <th>exam</th>
+                                    <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="text-nowrap">
-                                        <div>PRE2209</div>
-                                    </td>
-                                    <td class="text-nowrap">
-                                        <a href="profile.html">
-                                            <img class="rounded-circle"
-                                                src="{{asset("assets/img/profiles/avatar-02.jpg")}}" width="25"
-                                                alt="Star Students">
-                                            John Smith
-                                        </a>
-                                    </td>
-                                    <td class="text-center">1185</td>
-                                    <td class="text-center">98%</td>
-                                    <td class="text-end">
-                                        <div>2019</div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-nowrap">
-                                        <div>PRE1245</div>
-                                    </td>
-                                    <td class="text-nowrap">
-                                        <a href="profile.html">
-                                            <img class="rounded-circle"
-                                                src="{{asset("assets/img/profiles/avatar-01.jpg")}}" width="25"
-                                                alt="Star Students">
-                                            Jolie Hoskins
-                                        </a>
-                                    </td>
-                                    <td class="text-center">1195</td>
-                                    <td class="text-center">99.5%</td>
-                                    <td class="text-end">
-                                        <div>2018</div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-nowrap">
-                                        <div>PRE1625</div>
-                                    </td>
-                                    <td class="text-nowrap">
-                                        <a href="profile.html">
-                                            <img class="rounded-circle"
-                                                src="{{asset("assets/img/profiles/avatar-03.jpg")}}" width="25"
-                                                alt="Star Students">
-                                            Pennington Joy
-                                        </a>
-                                    </td>
-                                    <td class="text-center">1196</td>
-                                    <td class="text-center">99.6%</td>
-                                    <td class="text-end">
-                                        <div>2017</div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-nowrap">
-                                        <div>PRE2516</div>
-                                    </td>
-                                    <td class="text-nowrap">
-                                        <a href="profile.html">
-                                            <img class="rounded-circle"
-                                                src="{{asset("assets/img/profiles/avatar-04.jpg")}}" width="25"
-                                                alt="Star Students">
-                                            Millie Marsden
-                                        </a>
-                                    </td>
-                                    <td class="text-center">1187</td>
-                                    <td class="text-center">98.2%</td>
-                                    <td class="text-end">
-                                        <div>2016</div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-nowrap">
-                                        <div>PRE2209</div>
-                                    </td>
-                                    <td class="text-nowrap">
-                                        <a href="profile.html">
-                                            <img class="rounded-circle"
-                                                src="{{asset("assets/img/profiles/avatar-05.jpg")}}" width="25"
-                                                alt="Star Students">
-                                            John Smith
-                                        </a>
-                                    </td>
-                                    <td class="text-center">1185</td>
-                                    <td class="text-center">98%</td>
-                                    <td class="text-end">
-                                        <div>2015</div>
-                                    </td>
-                                </tr>
+                                @forelse ($childrenGrades as $grade)
+                                    <tr>
+                                        <td>{{ $grade->student->name }}</td>
+                                        <td>{{ $grade->subject->subject_name }}</td>
+                                        <td>{{ $grade->grade }}</td>
+                                        <td>{{ $grade->exam->exam_name }}</td>
+                                        <td>{{ $grade->created_at->format('Y-m-d') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4">No grade data available</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-
         </div>
-        <div class="col-xl-6 d-flex">
+    </div>
 
-            <div class="card flex-fill comman-shadow">
-                <div class="card-header d-flex align-items-center">
-                    <h5 class="card-title ">Student Activity </h5>
-                    <ul class="chart-list-out student-ellips">
-                        <li class="star-menus"><a href="javascript:;"><i class="fas fa-ellipsis-v"></i></a>
-                        </li>
-                    </ul>
+    <!-- Children Attendance -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Children's Attendance</h5>
                 </div>
                 <div class="card-body">
-                    <div class="activity-groups">
-                        <div class="activity-awards">
-                            <div class="award-boxs">
-                                <img src="{{asset("assets/img/icons/award-icon-01.svg")}}" alt="Award">
-                            </div>
-                            <div class="award-list-outs">
-                                <h4>1st place in "Chess”</h4>
-                                <h5>John Doe won 1st place in "Chess"</h5>
-                            </div>
-                            <div class="award-time-list">
-                                <span>1 Day ago</span>
-                            </div>
-                        </div>
-                        <div class="activity-awards">
-                            <div class="award-boxs">
-                                <img src="{{asset("assets/img/icons/award-icon-02.svg")}}" alt="Award">
-                            </div>
-                            <div class="award-list-outs">
-                                <h4>Participated in "Carrom"</h4>
-                                <h5>Justin Lee participated in "Carrom"</h5>
-                            </div>
-                            <div class="award-time-list">
-                                <span>2 hours ago</span>
-                            </div>
-                        </div>
-                        <div class="activity-awards">
-                            <div class="award-boxs">
-                                <img src="{{asset("assets/img/icons/award-icon-03.svg")}}" alt="Award">
-                            </div>
-                            <div class="award-list-outs">
-                                <h4>Internation conference in "St.John School"</h4>
-                                <h5>Justin Leeattended internation conference in "St.John School"</h5>
-                            </div>
-                            <div class="award-time-list">
-                                <span>2 Week ago</span>
-                            </div>
-                        </div>
-                        <div class="activity-awards mb-0">
-                            <div class="award-boxs">
-                                <img src="{{asset("assets/img/icons/award-icon-04.svg")}}" alt="Award">
-                            </div>
-                            <div class="award-list-outs">
-                                <h4>Won 1st place in "Chess"</h4>
-                                <h5>John Doe won 1st place in "Chess"</h5>
-                            </div>
-                            <div class="award-time-list">
-                                <span>3 Day ago</span>
-                            </div>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Child</th>
+                                    <th>Total Days</th>
+                                    <th>Days Present</th>
+                                    <th>Attendance Rate (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($children as $child)
+                                    @php
+                                        $totalDays = $child->attendance->count();
+                                        $daysPresent = $child->attendance->where('status', 'present')->count();
+                                        $attendanceRate = $totalDays > 0 ? ($daysPresent / $totalDays) * 100 : 0;
+                                    @endphp
+                                    <tr>
+                                        <td>{{ $child->name }}</td>
+                                        <td>{{ $totalDays }}</td>
+                                        <td>{{ $daysPresent }}</td>
+                                        <td>{{ number_format($attendanceRate, 2) }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4">No attendance data available</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-    @include('partiels.social')
-</div>
-@endsection
 
-@section("js-content")
-    <script src="{{asset("assets/plugins/apexchart/apexcharts.min.js")}}"></script>
-    <script src="{{asset("assets/plugins/apexchart/chart-data.js")}}"></script>
+</div>
 @endsection

@@ -4,8 +4,6 @@
 
 @section('style')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-datetimepicker.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" />
 @endsection
 
 @section('main')
@@ -16,7 +14,7 @@
                     <div class="page-sub-header">
                         <h3 class="page-title">Edit Subject</h3>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('subject.index') }}">Subjects</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('subject.index', $class->id) }}">Subjects</a></li>
                             <li class="breadcrumb-item active">Edit Subject</li>
                         </ul>
                     </div>
@@ -34,14 +32,15 @@
                             <div class="row">
                                 <div class="col-12 col-sm-12">
                                     <div class="form-group local-forms">
-                                        <label>Name <span class="login-danger">*</span></label>
-                                        <input class="form-control" type="text" name="name" value="{{ old('name', $subject->name) }}" placeholder="Enter Name">
-                                        <span class="text-danger error-text name_error"></span>
+                                        <label>Subject Name <span class="login-danger">*</span></label>
+                                        <input class="form-control" type="text" name="subject_name" value="{{ $subject->subject_name }}" placeholder="Enter Subject Name">
+                                        <span class="text-danger error-text subject_name_error invalid-feedback"></span>
                                     </div>
                                 </div>
+                                <input type="hidden" name="class_id" value="{{ $class->id }}">
                                 <div class="col-12">
                                     <div class="student-submit">
-                                        <button type="submit" class="btn btn-primary">Update</button>
+                                        <button type="submit" class="btn btn-primary">Update Subject</button>
                                     </div>
                                 </div>
                             </div>
@@ -55,20 +54,20 @@
 
 @section('js-content')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-    <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('assets/js/bootstrap-datetimepicker.min.js') }}"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
         $(document).ready(function() {
+
             function clearValidationErrors() {
                 $('.error-text').text('');
+                $('input').removeClass('is-invalid');
             }
 
             function showValidationErrors(errors) {
                 $.each(errors, function(key, value) {
-                    $('.' + key + '_error').text(value[0]);
+                    let inputField = $('[name="' + key + '"]');
+                    inputField.addClass('is-invalid');
+                    inputField.next('.error-text').text(value[0]);
                 });
             }
 
@@ -77,7 +76,7 @@
                 clearValidationErrors();
 
                 Swal.fire({
-                    title: 'Loading...',
+                    title: 'Updating...',
                     allowOutsideClick: false,
                     didOpen: () => {
                         Swal.showLoading();
@@ -100,7 +99,7 @@
                         });
                     },
                     error: function(xhr) {
-                        let errors = xhr.responseJSON.error;
+                        let errors = xhr.responseJSON.errors;
                         showValidationErrors(errors);
                         Swal.close();
                     },
@@ -112,6 +111,7 @@
 
             $('input, select').on('input change', function() {
                 $(this).next('.error-text').text('');
+                $(this).removeClass('is-invalid');
             });
         });
     </script>

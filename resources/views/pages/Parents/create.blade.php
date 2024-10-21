@@ -34,10 +34,10 @@
 
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms">
-                                        <label>Full Name <span class="login-danger">*</span></label>
-                                        <input class="form-control" type="text" name="name"
-                                            placeholder="Enter full Name">
-                                        <span class="text-danger error-text name_error"></span>
+                                        <label>Username <span class="login-danger">*</span></label>
+                                        <input class="form-control" type="text" name="username"
+                                            placeholder="Enter username">
+                                        <span class="text-danger error-text username_error"></span>
                                     </div>
                                 </div>
 
@@ -48,6 +48,25 @@
                                         <span class="text-danger error-text email_error"></span>
                                     </div>
                                 </div>
+
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group local-forms">
+                                        <label>Phone Number <span class="login-danger">*</span></label>
+                                        <input class="form-control" type="text" name="phone_number"
+                                            placeholder="Enter Phone Number">
+                                        <span class="text-danger error-text phone_number_error"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group local-forms">
+                                        <label>Password <span class="login-danger">*</span></label>
+                                        <input class="form-control" type="password" name="password"
+                                            placeholder="Enter Password">
+                                        <span class="text-danger error-text password_error"></span>
+                                    </div>
+                                </div>
+
                                 <div class="col-12">
                                     <div class="student-submit">
                                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -106,7 +125,7 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Parents created successfully!',
+                            text: 'Parent created successfully!',
                         }).then(() => {
                             window.location.href = response.redirect_url;
                         });

@@ -2,85 +2,75 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Classes;
 use App\Models\Subjects;
-use Flasher\Laravel\Facade\Flasher;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class SubjectsController extends Controller
 {
-    public function index() {
-        $subjects = Subjects::withCount(['courses', 'teachers'])->get();
-        return view('pages.subjects.list', compact('subjects'));
+
+    public function index($id)
+    {
+        $subjects = Subjects::where('class_id', $id)->get();
+        $class = Classes::find($id);
+        return view('pages.subjects.index', compact('subjects','class'));
     }
 
-    public function create() {
-        return view('pages.subjects.create');
+    public function create($id)
+    {
+        $class = Classes::find($id);
+        return view('pages.subjects.create', compact('class'));
     }
 
-    public function store(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
+    public function store(Request $request)
+    {
+        $request->validate([
+            'subject_name' => 'required|string|max:255|unique:subjects,subject_name',
+            'class_id' => 'required|exists:classes,id',
         ]);
-
-        if ($validator->fails()) {
-            Flasher::error('Please fix the following errors:');
-            return response()->json([
-                'error' => $validator->errors(),
-            ], 400);
-        }
 
         Subjects::create([
-            'name' => $request->name,
+            'subject_name' => $request->input('subject_name'),
+            'class_id' => $request->input('class_id'),
         ]);
-
-        Flasher::addSuccess("Successfully created a new subject");
 
         return response()->json([
-            'success' => true,
-            'redirect_url' => route('subject.index'),
-        ], 201);
-    }
-
-    public function edit($id) {
-        $subject = Subjects::findOrFail($id);
-        return view('pages.subjects.edit', compact('subject'));
-    }
-
-    public function update(Request $request, $id) {
-        $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
+            'message' => 'Subject created successfully!',
+            'redirect_url' => route('subject.index', $request->input('class_id'))
         ]);
+    }
 
-        if ($validator->fails()) {
-            Flasher::error('Please fix the following errors:');
-            return response()->json([
-                'error' => $validator->errors(),
-            ], 400);
-        }
+    public function edit($id)
+    {
+        $subject = Subjects::findOrFail($id);
+        $class = $subject->class;
+        return view('pages.subjects.edit', compact('subject', 'class'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'subject_name' => 'required|string|max:255|unique:subjects,subject_name,' . $id,
+            'class_id' => 'nullable|exists:classes,id',
+        ]);
 
         $subject = Subjects::findOrFail($id);
         $subject->update([
-            'name' => $request->name,
+            'subject_name' => $request->input('subject_name'),
+            'class_id' => $request->input('class_id'),
         ]);
 
-        Flasher::addSuccess("Successfully updated the subject");
-
         return response()->json([
-            'success' => true,
-            'redirect_url' => route('subject.index'),
-        ], 200);
+            'message' => 'Subject updated successfully!',
+            'redirect_url' => route('subject.index', $request->input('class_id'))
+        ]);
     }
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
         $subject = Subjects::findOrFail($id);
         $subject->delete();
 
-        Flasher::addSuccess("Successfully deleted the subject");
-
-        return response()->json([
-            'success' => true,
-            'redirect_url' => route('subject.index'),
-        ], 200);
+        return response()->json(['message' => 'Subject deleted successfully!']);
     }
 }

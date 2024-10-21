@@ -5,32 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\Salaries;
 use App\Models\Teachers;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
+use Carbon\Carbon;
 
 class SalariesController extends Controller
 {
     /**
      * Display a listing of the salaries.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $salaries = Salaries::with('teacher.user')->get();
-
-        if(Gate::allows('viewTeacher', Auth::user())) {
-            $teacherId = Auth::user()->teacher->id;
-            $salaries = Salaries::where('teacher_id', $teacherId)->get();
-        }
-
-        return view('pages.salaries.list', compact('salaries'));
+        $salaries = Salaries::with('teacher')->get();
+        return view('pages.salaries.index', compact('salaries'));
     }
 
     /**
-     * Show the form for creating a new salary record.
-     *
-     * @return \Illuminate\Http\Response
+     * Show the form for creating a new salary.
      */
     public function create()
     {
@@ -39,93 +28,66 @@ class SalariesController extends Controller
     }
 
     /**
-     * Store a newly created salary in the database.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Store a newly created salary in storage.
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'teacher_id' => 'required|exists:teachers,id',
-            'amount' => 'required|numeric|min:0',
-            'payment_date' => 'required|date',
-            'status' => 'required|in:paid,pending',
-        ]);
+        $validated = $this->validateSalary($request);
 
-        Salaries::create([
-            'teacher_id' => $request->teacher_id,
-            'amount' => $request->amount,
-            'payment_date' => $request->payment_date,
-            'status' => $request->status,
-        ]);
+        $validated['payment_date'] = Carbon::createFromFormat('d-m-Y', $validated['payment_date'])->format('Y-m-d');
 
-        return response()->json(['success' => true, 'redirect_url' => route('salary.index')]);
+        Salaries::create($validated);
+
+        return response()->json(['redirect_url' => route('salary.index', $validated['teacher_id'])], 201);
     }
 
     /**
      * Show the form for editing the specified salary.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
         $salary = Salaries::findOrFail($id);
         $teachers = Teachers::all();
+
         return view('pages.salaries.edit', compact('salary', 'teachers'));
     }
 
     /**
-     * Update the specified salary in the database.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Update the specified salary in storage.
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'teacher_id' => 'required|exists:teachers,id',
-            'amount' => 'required|numeric|min:0',
-            'payment_date' => 'required|date',
-            'status' => 'required|in:paid,pending',
-        ]);
-
         $salary = Salaries::findOrFail($id);
-        $salary->update([
-            'teacher_id' => $request->teacher_id,
-            'amount' => $request->amount,
-            'payment_date' => $request->payment_date,
-            'status' => $request->status,
-        ]);
+        $validated = $this->validateSalary($request);
 
-        return response()->json(['success' => true, 'redirect_url' => route('salary.index')]);
+        $validated['payment_date'] = Carbon::createFromFormat('d-m-Y', $validated['payment_date'])->format('Y-m-d');
+
+        $salary->update($validated);
+
+        return response()->json(['redirect_url' => route('salary.index', $validated['teacher_id'])], 201);
     }
 
     /**
-     * Remove the specified salary from the database.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Remove the specified salary from storage.
      */
     public function destroy($id)
     {
         $salary = Salaries::findOrFail($id);
         $salary->delete();
 
-        return response()->json(['success' => true, 'message' => 'salary deleted successfully!']);
+        return response()->json(['message' => 'Salary deleted successfully.'], 200);
     }
 
     /**
-     * Display the specified salary details.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Validate the salary request data.
      */
-    public function show($id)
+    private function validateSalary(Request $request)
     {
-        $salary = Salaries::with('teacher.user')->findOrFail($id);
-        return view('salaries.show', compact('salary'));
+        return $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'payment_date' => 'required|date_format:d-m-Y',
+            'status' => 'required|in:paid,pending',
+            'teacher_id' => 'required|exists:teachers,id',
+        ]);
     }
 }

@@ -37,7 +37,7 @@
                                         <select class="form-control select" name="teacher_id">
                                             <option value="">Select Teacher</option>
                                             @foreach($teachers as $teacher)
-                                                <option value="{{ $teacher->id }}">{{ $teacher->user->name }}</option>
+                                                <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
                                             @endforeach
                                         </select>
                                         <span class="text-danger error-text teacher_id_error"></span>
@@ -51,7 +51,6 @@
                                             <option value="">Select Salary Status</option>
                                             <option value="paid">Paid</option>
                                             <option value="pending">Pending</option>
-                                            <option value="overdue">Overdue</option>
                                         </select>
                                         <span class="text-danger error-text status_error"></span>
                                     </div>

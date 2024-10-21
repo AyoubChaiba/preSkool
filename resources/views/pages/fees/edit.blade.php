@@ -30,7 +30,7 @@
                     <div class="card-body">
                         <form id="feesForm" method="POST" action="{{ route('fees.update', $fee->id) }}">
                             @csrf
-                            @method('PUT') <!-- Use PUT method for updating -->
+                            @method('PUT')
                             <div class="row">
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms">
@@ -39,7 +39,7 @@
                                             <option value="">Select Student</option>
                                             @foreach($students as $student)
                                                 <option value="{{ $student->id }}" {{ $fee->student_id == $student->id ? 'selected' : '' }}>
-                                                    {{ $student->user->name }}
+                                                    {{ $student->name }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -54,7 +54,6 @@
                                             <option value="">Select Fee Type</option>
                                             <option value="paid" {{ $fee->status == 'paid' ? 'selected' : '' }}>Paid</option>
                                             <option value="pending" {{ $fee->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="overdue" {{ $fee->status == 'overdue' ? 'selected' : '' }}>Overdue</option>
                                         </select>
                                         <span class="text-danger error-text status_error"></span>
                                     </div>
@@ -71,7 +70,7 @@
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms calendar-icon">
                                         <label>Due Date <span class="login-danger">*</span></label>
-                                        <input class="form-control datetimepicker" type="text" name="due_date" value="{{ $fee->due_date->format('d-m-Y') }}" placeholder="DD-MM-YYYY">
+                                        <input class="form-control datetimepicker" type="text" name="payment_date" value="{{ $fee->payment_date }}" placeholder="DD-MM-YYYY">
                                         <span class="text-danger error-text due_date_error"></span>
                                     </div>
                                 </div>

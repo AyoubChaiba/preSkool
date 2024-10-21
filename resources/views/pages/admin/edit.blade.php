@@ -35,23 +35,23 @@
                             @method('PUT')
                             <div class="row">
 
-                                <div class="col-12 col-sm-6">
+                                <div class="col-12 col-sm-4">
                                     <div class="form-group local-forms">
-                                        <label>Full Name <span class="login-danger">*</span></label>
-                                        <input class="form-control" type="text" name="name" value="{{ $admin->name }}" placeholder="Enter full Name" required>
+                                        <label>Username <span class="login-danger">*</span></label>
+                                        <input class="form-control" type="text" name="username" value="{{ $admin->username }}" placeholder="Username" >
                                         <span class="text-danger error-text name_error"></span>
                                     </div>
                                 </div>
 
-                                <div class="col-12 col-sm-6">
+                                <div class="col-12 col-sm-4">
                                     <div class="form-group local-forms">
                                         <label>Email <span class="login-danger">*</span></label>
-                                        <input class="form-control" type="email" name="email" value="{{ $admin->email }}" placeholder="Enter Email" required>
+                                        <input class="form-control" type="email" name="email" value="{{ $admin->email }}" placeholder="Enter Email" >
                                         <span class="text-danger error-text email_error"></span>
                                     </div>
                                 </div>
 
-                                <div class="col-12 col-sm-6">
+                                <div class="col-12 col-sm-4">
                                     <div class="form-group local-forms">
                                         <label>Password</label>
                                         <input class="form-control" type="password" name="password" placeholder="Enter Password (optional)">
@@ -59,24 +59,9 @@
                                     </div>
                                 </div>
 
-                                <div class="col-12 col-sm-6">
-                                    <div class="form-group local-forms">
-                                        <label>Role <span class="login-danger">*</span></label>
-                                        <select class="form-control select" name="role" required>
-                                            <option value="">Please Select Role</option>
-                                            <option value="admin" {{ $admin->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                                            <option value="student" {{ $admin->role == 'student' ? 'selected' : '' }}>Student</option>
-                                            <option value="teacher" {{ $admin->role == 'teacher' ? 'selected' : '' }}>Teacher</option>
-                                            <option value="parent" {{ $admin->role == 'parent' ? 'selected' : '' }}>Parent</option>
-                                        </select>
-                                        <span class="text-danger error-text role_error"></span>
-                                    </div>
-                                </div>
-
-
                                 <div class="col-12">
                                     <div class="student-submit">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="submit" class="btn btn-primary">Update</button>
                                     </div>
                                 </div>
                             </div>

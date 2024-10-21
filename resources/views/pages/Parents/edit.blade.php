@@ -3,7 +3,6 @@
 @section('title', 'Edit Parent')
 
 @section('style')
-    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 @endsection
 
@@ -17,7 +16,7 @@
                     <div class="page-sub-header">
                         <h3 class="page-title">Edit Parent</h3>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route("parent.index") }}">Parent</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('parent.index') }}">Parents</a></li>
                             <li class="breadcrumb-item active">Edit Parent</li>
                         </ul>
                     </div>
@@ -29,39 +28,49 @@
             <div class="col-sm-12">
                 <div class="card comman-shadow">
                     <div class="card-body">
-
-                        <form id="parentForm" action="{{ route('parent.update', $parent->id) }}" method="POST">
+                        <form id="parentForm" method="POST" action="{{ route('parent.update', $parent->id) }}">
                             @csrf
                             @method('PUT')
                             <div class="row">
 
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms">
-                                        <label>Full Name <span class="login-danger">*</span></label>
-                                        <input class="form-control" type="text" name="name" value="{{ $parent->user->name }}" placeholder="Enter full Name" >
-                                        <span class="text-danger error-text name_error"></span>
+                                        <label>Username <span class="login-danger">*</span></label>
+                                        <input class="form-control" type="text" name="username" value="{{ $parent->user->username }}"
+                                            placeholder="Enter username">
+                                        <span class="text-danger error-text username_error"></span>
                                     </div>
                                 </div>
 
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms">
                                         <label>Email <span class="login-danger">*</span></label>
-                                        <input class="form-control" type="email" name="email" value="{{ $parent->user->email }}" placeholder="Enter Email" >
+                                        <input class="form-control" type="email" name="email" value="{{ $parent->user->email }}"
+                                            placeholder="Enter Email">
                                         <span class="text-danger error-text email_error"></span>
                                     </div>
                                 </div>
 
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms">
-                                        <label>Password</label>
-                                        <input class="form-control" type="password" name="password" placeholder="Enter Password (optional)">
+                                        <label>Phone Number <span class="login-danger">*</span></label>
+                                        <input class="form-control" type="text" name="phone_number" value="{{ $parent->phone_number }}"
+                                            placeholder="Enter Phone Number">
+                                        <span class="text-danger error-text phone_number_error"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group local-forms">
+                                        <label>Password (Leave blank if you don't want to change)</label>
+                                        <input class="form-control" type="password" name="password" placeholder="Enter Password">
                                         <span class="text-danger error-text password_error"></span>
                                     </div>
                                 </div>
 
                                 <div class="col-12">
                                     <div class="student-submit">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="submit" class="btn btn-primary">Update</button>
                                     </div>
                                 </div>
                             </div>
@@ -71,17 +80,16 @@
                 </div>
             </div>
         </div>
+
     </div>
 
 @endsection
 
 @section('js-content')
-    <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
     <script>
         $(document).ready(function() {
-            $('.select').select2();
 
             function clearValidationErrors() {
                 $('.error-text').text('');
@@ -114,7 +122,6 @@
                     processData: false,
                     contentType: false,
                     success: function(response) {
-                        $('#parentForm')[0].reset();
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',

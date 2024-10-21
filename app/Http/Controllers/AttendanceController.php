@@ -2,100 +2,109 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Attendance;
-use App\Models\Courses;
+use App\Models\Classes;
 use App\Models\Students;
+use App\Models\Attendance;
+use App\Models\Sections;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
-    /**
-     * Display a listing of the attendance records.
-     */
-    public function show($student_id , $course_id)
+    public function index($id)
     {
-        $attendances = Attendance::with('student', 'course')
-            ->where('student_id', $student_id)
-            ->where('course_id', $course_id)
-            ->get();
-
-        return view('pages.courses.students.attendance.show', compact('attendances'));
+        $class = Classes::find($id);
+        $sections = Sections::where('class_id', $id)->get();
+        return view('pages.attendances.index', compact('class', 'sections'));
     }
 
-
-
-    public function create( $student_id , $course_id )
+    public function fetchStudents(Request $request)
     {
-        $student = Students::find($student_id);
-        $course = Courses::find($course_id);
-
-
-        return view('pages.courses.students.attendance.create', compact('student', 'course'));
-    }
-
-
-    /**
-     * Store a newly created attendance record in storage.
-     */
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'course_id' => 'required|exists:courses,id',
-            'attendance_date' => 'required|date',
-            'status' => 'required|in:present,absent,excused',
+        $request->validate([
+            'date' => 'required|date',
+            'section_id' => 'required|exists:sections,id',
+            'class_id' => 'required|exists:classes,id',
         ]);
 
-        Attendance::create($validatedData);
+        $date = $request->input('date');
+        $sectionId = $request->input('section_id');
+        $classId = $request->input('class_id');
+
+        $students = Students::where('section_id', $sectionId)
+            ->where('class_id', $classId)
+            ->with(['section', 'class', 'attendance' => function($query) use ($date) {
+                $query->where('date', $date);
+            }])
+            ->orderBy('name', 'asc')
+            ->get();
+
+        if ($students->isEmpty()) {
+            return response()->json([
+                'students' => [],
+                'attendance' => [],
+                'message' => 'No students found for this section and class.'
+            ], 404);
+        }
+
+        $attendanceData = $students->map(function($student) {
+            $attendanceRecord = $student->attendance->first();
+
+            return [
+                'id' => $student->id,
+                'name' => $student->name,
+                'section' => $student->section->section_name,
+                'class' => $student->class->class_name,
+                'attendance_status' => $attendanceRecord ? $attendanceRecord->status : null
+            ];
+        });
 
         return response()->json([
-            'success' => true,
-            'message' => 'Attendance recorded successfully!',
-            'redirect_url' => route('courses.students' , $request->course_id)
-        ], 201);
+            'students' => $attendanceData,
+            'message' => 'Attendance data retrieved successfully.'
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified attendance record.
-     */
-    public function edit($id)
+    public function saveAttendance(Request $request)
     {
-        $attendance = Attendance::findOrFail($id);
+        $request->validate([
+            'status' => 'required|array',
+            'date' => 'required|date',
+            'class_id' => 'required|integer'
+        ]);
 
-        return view('pages.courses.students.attendance.edit', compact('attendance'));
+        $attendanceData = $request->input('status');
+        $date = $request->input('date');
 
+        if (empty($attendanceData)) {
+            return response()->json(['message' => 'No attendance data provided'], 400);
+        }
+
+        foreach ($attendanceData as $student_id => $status) {
+            $attendance = Attendance::where('student_id', $student_id)
+                                    ->where('date', $date)
+                                    ->first();
+
+            if ($attendance) {
+                $attendance->status = $status;
+                $attendance->save();
+            } else {
+                Attendance::create([
+                    'student_id' => $student_id,
+                    'class_id' => $request->input('class_id'),
+                    'date' => $date,
+                    'status' => $status ,
+                ]);
+            }
+        }
+
+        return response()->json(['message' => 'Attendance saved successfully']);
     }
 
-    public function update(Request $request, $id)
-{
-    $validatedData = $request->validate([
-        'attendance_date' => 'required|date',
-        'status' => 'required|in:present,absent,excused',
-    ]);
-
-    $attendance = Attendance::findOrFail($id);
-
-    $attendance->update($validatedData);
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Attendance updated successfully!',
-        'redirect_url' => route('courses.students' , $attendance->course_id)
-    ], 200);
-}
-
-
-    /**
-     * Remove the specified attendance record from storage.
-     */
-    public function destroy($id)
+    public function show($id)
     {
-        $attendance = Attendance::findOrFail($id);
-        $attendance->delete();
+        $student = Students::findOrFail($id);
+        $attendances = Attendance::where('student_id', $student->id)->orderBy('date', 'asc')->get();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Attendance deleted successfully!'
-        ], 200);
+        return view('pages.attendances.report', compact('student', 'attendances'));
     }
+
 }
