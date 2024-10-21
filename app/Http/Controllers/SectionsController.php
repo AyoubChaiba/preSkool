@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Classes;
 use App\Models\Sections;
-use App\Models\Teachers;
+use App\Models\teachers;
 use Illuminate\Http\Request;
 
 class SectionsController extends Controller

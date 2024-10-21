@@ -17,7 +17,7 @@ class Parents extends Model
     ];
 
     public function students() {
-        return $this->hasMany(Students::class, 'parent_id');
+        return $this->hasMany(students::class, 'parent_id');
     }
 
     public function user() {
@@ -25,7 +25,7 @@ class Parents extends Model
     }
 
     public function children(){
-        return $this->hasMany(Students::class, 'parent_id');
+        return $this->hasMany(students::class, 'parent_id');
     }
 
 

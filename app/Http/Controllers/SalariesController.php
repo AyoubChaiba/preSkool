@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Salaries;
-use App\Models\Teachers;
+use App\Models\teachers;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 

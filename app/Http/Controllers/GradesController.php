@@ -6,8 +6,8 @@ use App\Models\Classes;
 use App\Models\Exams;
 use App\Models\gradePoints;
 use App\Models\Grades;
-use App\Models\Students;
-use App\Models\Subjects;
+use App\Models\students;
+use App\Models\subjects;
 use Illuminate\Http\Request;
 
 class GradesController extends Controller

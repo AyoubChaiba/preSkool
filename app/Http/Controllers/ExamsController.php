@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Exams;
 use App\Models\Classes;
-use App\Models\Subjects;
+use App\Models\subjects;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

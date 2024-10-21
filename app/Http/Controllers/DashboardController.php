@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Attendance;
 use App\Models\Fees;
 use App\Models\Classes;
-use App\Models\Courses;
 use App\Models\Parents;
 use App\Models\Salaries;
-use App\Models\Students;
+use App\Models\students;
 use App\Models\teachers;
-use App\Models\Enrollments;
 use App\Models\Grades;
-use App\Models\Subjects;
+use App\Models\subjects;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller

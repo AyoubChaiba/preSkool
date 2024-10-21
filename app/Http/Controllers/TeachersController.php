@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Classes;
-use App\Models\Subjects;
-use App\Models\Teachers;
+use App\Models\subjects;
+use App\Models\teachers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
