@@ -6,21 +6,25 @@
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/datatables.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-        .grade-high {
+        .grade-excellent {
             background-color: #d4edda;
             color: #155724;
         }
-        .grade-mid {
+        .grade-very-good {
+            background-color: #c3e6cb;
+            color: #155724;
+        }
+        .grade-good {
             background-color: #fff3cd;
             color: #856404;
         }
-        .grade-low {
+        .grade-average {
+            background-color: #ffeeba;
+            color: #856404;
+        }
+        .grade-fail {
             background-color: #f8d7da;
             color: #721c24;
-        }
-        .grade {
-            background-color: #f0f0f0;
-            color: #1f1f1f;
         }
         .dataTables_wrapper .dataTables_paginate .paginate_button {
             padding: 0;
@@ -78,14 +82,16 @@
                             <tbody>
                                 @foreach($studentGrades as $grade)
                                     <tr class="
-                                        @if($grade['average_grade'] === 'N/A')
-                                            grade
-                                        @elseif($grade['average_grade'] >= 20)
-                                            grade-high
+                                        @if($grade['average_grade'] >= 18)
+                                            grade-excellent
+                                        @elseif($grade['average_grade'] >= 16)
+                                            grade-very-good
+                                        @elseif($grade['average_grade'] >= 13)
+                                            grade-good
                                         @elseif($grade['average_grade'] >= 10)
-                                            grade-mid
+                                            grade-average
                                         @else
-                                            grade-low
+                                            grade-fail
                                         @endif">
                                         <td>{{ $grade['subject'] }}</td>
                                         <td>{{ $grade['total_exams'] }}</td>

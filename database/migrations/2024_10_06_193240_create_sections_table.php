@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('section_name');
             $table->integer('capacity');
-            $table->foreignId('class_id')->constrained('classes')->onDelete('set null');
+            $table->foreignId('class_id')->constrained('classes');
             $table->timestamps();
         });
     }

@@ -27,7 +27,7 @@
                     <div class="card-body">
                         <form id="gradePointsForm" method="POST" action="{{ route('gradepoints.update', $gradepoint->id) }}">
                             @csrf
-                            @method('PUT') <!-- Add this to indicate PUT request -->
+                            @method('PUT')
                             <div class="row">
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms">
