@@ -7,24 +7,19 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ExamsController;
 use App\Http\Controllers\GradesController;
 use App\Http\Controllers\ClassesController;
-use App\Http\Controllers\CoursesController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ParentsController;
-use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\SalariesController;
 use App\Http\Controllers\SectionsController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\SubjectsController;
 use App\Http\Controllers\TeachersController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DocumentsController;
 use App\Http\Controllers\TimetableController;
 use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\EnrollmentsController;
 use App\Http\Controllers\GradepointsController;
 use App\Http\Controllers\ConversationController;
-use App\Http\Controllers\NotificationsController;
-use Symfony\Component\HttpKernel\DataCollector\TimeDataCollector;
+
 
 /*
 |--------------------------------------------------------------------------

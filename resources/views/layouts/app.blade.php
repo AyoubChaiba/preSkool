@@ -24,8 +24,6 @@
 
 <body>
 
-    {!! Flasher::render() !!}
-
     <div class="main-wrapper">
         @include("partiels.header")
 
@@ -51,7 +49,7 @@
             const day = String(today.getDate()).padStart(2, '0');
             const month = String(today.getMonth() + 1).padStart(2, '0');
             const year = today.getFullYear();
-            const formattedDate = `${year}-${month}-${day}`;
+            const formattedDate = `${day}-${month}-${year}`;
             document.getElementById('date').value = formattedDate;
         });
     </script>
