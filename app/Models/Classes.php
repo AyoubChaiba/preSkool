@@ -19,7 +19,7 @@ class Classes extends Model
     }
 
     public function teachers() {
-        return $this->hasMany(Teachers::class,'class_id');
+        return $this->hasMany(teachers::class,'class_id');
     }
 
     public function subjects() {

@@ -24,7 +24,7 @@ class Grades extends Model
 
     public function subject()
     {
-        return $this->belongsTo(Subjects::class);
+        return $this->belongsTo(subjects::class);
     }
 
     public function exam()
