@@ -6,21 +6,20 @@
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/datatables.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-        /* Color coding for grades */
         .grade-high {
-            background-color: #d4edda; /* Green for high grades */
+            background-color: #d4edda;
             color: #155724;
         }
         .grade-mid {
-            background-color: #fff3cd; /* Yellow for mid grades */
+            background-color: #fff3cd;
             color: #856404;
         }
         .grade-low {
-            background-color: #f8d7da; /* Red for low grades */
+            background-color: #f8d7da;
             color: #721c24;
         }
         .grade {
-            background-color: #f0f0f0; /* Gray for "N/A" */
+            background-color: #f0f0f0;
             color: #1f1f1f;
         }
         .dataTables_wrapper .dataTables_paginate .paginate_button {

@@ -85,13 +85,19 @@ class ExamsController extends Controller
      */
     private function validateExam(Request $request)
     {
-        return $request->validate([
+
+        $validated = $request->validate([
             'exam_name' => 'required|string|max:255',
             'exam_date' => 'required|date',
             'subject_id' => 'required|exists:subjects,id',
             'class_id' => 'required|exists:classes,id',
         ]);
+
+        $validated['exam_date'] = Carbon::createFromFormat('d-m-Y', $request->input('exam_date'))->format('Y-m-d');
+
+        return $validated;
     }
+
 
     public function getResults()
     {
