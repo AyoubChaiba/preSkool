@@ -59,11 +59,11 @@ class User extends Authenticatable
     }
 
     public function teacher() {
-        return $this->hasOne(Teachers::class);
+        return $this->hasOne(teachers::class);
     }
 
     public function student() {
-        return $this->hasOne(Students::class);
+        return $this->hasOne(students::class);
     }
 
     public function parent() {

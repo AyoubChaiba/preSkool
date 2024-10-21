@@ -27,16 +27,16 @@ class Timetable extends Model
 
     public function subject()
     {
-        return $this->belongsTo(Subjects::class);
+        return $this->belongsTo(subjects::class);
     }
 
     public function teacher()
     {
-        return $this->belongsTo(Teachers::class);
+        return $this->belongsTo(teachers::class);
     }
 
     public function students() {
-        return $this->hasManyThrough(Students::class, Sections::class, 'id', 'section_id', 'id', 'id');
+        return $this->hasManyThrough(students::class, Sections::class, 'id', 'section_id', 'id', 'id');
     }
 
     public function section() {

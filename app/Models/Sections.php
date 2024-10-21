@@ -21,7 +21,7 @@ class Sections extends Model
     }
 
     public function teacher() {
-        return $this->belongsTo(Teachers::class, "class_teacher_id");
+        return $this->belongsTo(teachers::class, "class_teacher_id");
     }
 
     public function class() {
