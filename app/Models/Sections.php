@@ -17,7 +17,7 @@ class Sections extends Model
     ];
 
     public function students() {
-        return $this->hasMany(Students::class);
+        return $this->hasMany(students::class);
     }
 
     public function teacher() {

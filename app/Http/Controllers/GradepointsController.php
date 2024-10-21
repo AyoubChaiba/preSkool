@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GradePoints;
+use App\Models\gradePoints;
 use Illuminate\Http\Request;
 
 class GradePointsController extends Controller

@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Classes;
 use App\Models\Sections;
-use App\Models\Subjects;
-use App\Models\Teachers;
+use App\Models\subjects;
+use App\Models\teachers;
 use App\Models\Timetable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

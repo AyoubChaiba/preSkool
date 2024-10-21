@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Classes;
-use App\Models\Students;
+use App\Models\students;
 use App\Models\Attendance;
 use App\Models\Sections;
 use Illuminate\Http\Request;

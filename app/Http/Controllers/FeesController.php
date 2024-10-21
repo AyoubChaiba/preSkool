@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fees;
-use App\Models\Students;
+use App\Models\students;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -39,7 +39,7 @@ class FeesController extends Controller
      */
     public function create()
     {
-        $students = Students::all();
+        $students = students::all();
         return view('pages.fees.create', compact('students'));
     }
 
@@ -63,7 +63,7 @@ class FeesController extends Controller
     public function edit($id)
     {
         $fee = Fees::findOrFail($id);
-        $students = Students::all();
+        $students = students::all();
 
         return view('pages.fees.edit', compact('fee', 'students'));
     }

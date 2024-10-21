@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\Classes;
 use App\Models\Parents;
 use App\Models\Sections;
-use App\Models\Students;
+use App\Models\students;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
