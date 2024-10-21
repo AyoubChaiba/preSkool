@@ -11,17 +11,14 @@ class Fees extends Model
 
     protected $fillable = [
         'student_id',
-        'amount',
-        'due_date',
         'status',
+        'amount',
+        'payment_date'
     ];
 
-    protected $casts = [
-        'due_date' => 'datetime',
-    ];
-
-    public function student()
-    {
+    public function student() {
         return $this->belongsTo(Students::class);
     }
+
+    
 }

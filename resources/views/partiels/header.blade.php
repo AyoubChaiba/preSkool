@@ -18,22 +18,6 @@
     </a>
 
     <ul class="nav user-menu">
-        <li class="nav-item dropdown noti-dropdown me-2">
-            <a href="#" class="dropdown-toggle nav-link header-nav-list" data-bs-toggle="dropdown" id="notification-dropdown">
-                <img src="{{ asset('assets/img/icons/header-icon-05.svg') }}" alt="">
-            </a>
-            <div class="dropdown-menu notifications" id="notification-content">
-                <div class="topnav-dropdown-header">
-                    <span class="notification-title">Notifications</span>
-                </div>
-                <div class="noti-content">
-                    <ul class="notification-list" id="notification-list">
-                    </ul>
-                </div>
-                <div class="topnav-dropdown-footer">
-                </div>
-            </div>
-        </li>
 
         <li class="nav-item zoom-screen me-2">
             <a href="#" class="nav-link header-nav-list win-maximize">
@@ -46,7 +30,7 @@
                 <span class="user-img">
                     <img class="rounded-circle" src="{{ asset('assets/img/profiles/avatar-01.jpg') }}" width="31" alt="{{ Auth::user()->name }}">
                     <div class="user-text">
-                        <h6>{{ Auth::user()->name }}</h6>
+                        <h6>{{ Auth::user()->username }}</h6>
                         <p class="text-muted mb-0">{{ Auth::user()->role }}</p>
                     </div>
                 </span>
@@ -67,45 +51,3 @@
     </ul>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#notification-dropdown').on('click', function(e) {
-            e.preventDefault();
-            $.ajax({
-                url: '{{ route("notifications.get") }}',
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    $('#notification-list').empty();
-                    if (data.length === 0) {
-                        $('#notification-list').append('<li class="notification-message">No notifications available.</li>');
-                    } else {
-                        $.each(data, function(index, notification) {
-                            $('#notification-list').append(`
-                                <li class="notification-message">
-                                    <a href="##">
-                                        <div class="media d-flex">
-                                            <div class="media-body flex-grow-1">
-                                                <p class="noti-details"><span class="noti-title">${notification.message}</span></p>
-                                                <p class="noti-time"><span class="notification-time">${new Date(notification.created_at).toLocaleString()}</span></p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                            `);
-                        });
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error(error);
-                    alert('Could not fetch notifications.');
-                }
-            });
-        });
-
-        $('#clear-notifications').on('click', function() {
-            alert('Clear all notifications action can be implemented here.');
-        });
-    });
-</script>

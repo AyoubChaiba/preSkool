@@ -9,20 +9,16 @@ class Attendance extends Model
 {
     use HasFactory;
 
-    protected $table ="attendance";
 
-    protected $fillable = [
-        'student_id',
-        'course_id',
-        'attendance_date',
-        'status'
-        ] ;
+    protected $fillable = ['student_id', 'class_id', 'date', 'status'];
 
-    public function student() {
+    public function student()
+    {
         return $this->belongsTo(Students::class);
     }
 
-    public function course() {
-        return $this->belongsTo(Courses::class);
+    public function class()
+    {
+        return $this->belongsTo(Classes::class);
     }
 }

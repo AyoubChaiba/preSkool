@@ -2,20 +2,21 @@
 
 namespace App\Models;
 
-use App\Models\Courses;
-use App\Models\Subjects;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class teachers extends Model
+class Teachers extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'subject_id',
         'hire_date',
+        'subject_id',
+        'class_id',
+        'name',
+        'phone_number',
+        'class_teacher_id',
     ];
 
     public function user() {
@@ -23,11 +24,11 @@ class teachers extends Model
     }
 
     public function subject() {
-        return $this->belongsTo(Subjects::class, "subject_id");
+        return $this->belongsTo(Subjects::class, 'subject_id');
     }
 
-    public function courses() {
-        return $this->hasMany(Courses::class, "teacher_id");
+    public function class() {
+        return $this->belongsTo(Classes::class, 'class_id');
     }
 
 }

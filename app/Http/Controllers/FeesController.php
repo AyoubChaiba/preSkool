@@ -5,39 +5,37 @@ namespace App\Http\Controllers;
 use App\Models\Fees;
 use App\Models\Students;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
+use Carbon\Carbon;
 
 class FeesController extends Controller
 {
     /**
      * Display a listing of the fees.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $fees = Fees::with('student.user')->get();
+        $fees = Fees::with('student')->get();
 
-        if (Gate::allows('viewParent', Auth::user())) {
-            $parentId = Auth::user()->parent->id;
-            $fees = Fees::whereHas('student.user', function ($query) use ($parentId) {
-                $query->where('parent_id', $parentId);
-            })->get();
-        } elseif (Gate::allows('viewStudent', Auth::user())) {
-            $studentId = Auth::user()->student->id;
-            $fees = Fees::whereHas('student.user', function ($query) use ($studentId) {
-                $query->where('student_id', $studentId);
-            })->get();
+        $user = auth()->user();
+
+        if ($user->role === "admin") {
+            return view('pages.fees.index', compact('fees'));
+        } elseif ($user->role === "student") {
+            $student = $user->student;
+            $fees = Fees::where('student_id', $student->id)->get();
+            return view('pages.fees.index', compact('fees'));
+        } elseif ($user->role === "parent") {
+            $children = $user->parent->children;
+            $fees = Fees::whereIn('student_id', $children->pluck('id'))->get();
+            return view('pages.fees.index', compact('fees'));
+        } else {
+            return redirect()->route('home')->with('error', 'Unauthorized access.');
         }
-
-        return view('pages.fees.list', compact('fees'));
     }
+
 
     /**
      * Show the form for creating a new fee.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function create()
     {
@@ -46,92 +44,66 @@ class FeesController extends Controller
     }
 
     /**
-     * Store a newly created fee in the database.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Store a newly created fee in storage.
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'amount' => 'required|numeric',
-            'due_date' => 'required|date',
-            'status' => 'required|in:paid,pending,overdue',
-        ]);
+        $validated = $this->validateFee($request);
 
-        Fees::create([
-            'student_id' => $request->student_id,
-            'amount' => $request->amount,
-            'due_date' => $request->due_date,
-            'status' => $request->status,
-        ]);
+        $validated['payment_date'] = Carbon::createFromFormat('d-m-Y', $validated['payment_date'])->format('Y-m-d');
 
-        return response()->json(['success' => true, 'redirect_url' => route('fees.index')]);
+        Fees::create($validated);
+
+        return response()->json(['redirect_url' => route('fees.index', $validated['student_id'])], 201);
     }
 
     /**
      * Show the form for editing the specified fee.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
         $fee = Fees::findOrFail($id);
         $students = Students::all();
+
         return view('pages.fees.edit', compact('fee', 'students'));
     }
 
     /**
-     * Update the specified fee in the database.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Update the specified fee in storage.
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'amount' => 'required|numeric',
-            'due_date' => 'required|date',
-            'status' => 'required|in:paid,pending,overdue',
-        ]);
-
         $fee = Fees::findOrFail($id);
-        $fee->update([
-            'student_id' => $request->student_id,
-            'amount' => $request->amount,
-            'due_date' => $request->due_date,
-            'status' => $request->status,
-        ]);
+        $validated = $this->validateFee($request);
 
-        return response()->json(['success' => true, 'redirect_url' => route('fees.index')]);
+        $validated['payment_date'] = Carbon::createFromFormat('d-m-Y', $validated['payment_date'])->format('Y-m-d');
+
+        $fee->update($validated);
+
+        return response()->json(['redirect_url' => route('fees.index', $validated['student_id'])], 201);
     }
 
     /**
-     * Remove the specified fee from the database.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Remove the specified fee from storage.
      */
     public function destroy($id)
     {
         $fee = Fees::findOrFail($id);
         $fee->delete();
-        return response()->json(['success' => true, 'message' => 'Fee deleted successfully!']);
+
+        return response()->json(['message' => 'Fee deleted successfully.'], 200);
     }
 
     /**
-     * Display the specified fee details.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Validate the fee request data.
      */
-    public function show($id)
+    private function validateFee(Request $request)
     {
-        $fee = Fees::with('student.user')->findOrFail($id);
-        return view('fees.show', compact('fee'));
+        return $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'payment_date' => 'required|date_format:d-m-Y',
+            'status' => 'required|in:paid,pending',
+            'student_id' => 'required|exists:students,id',
+        ]);
     }
 }

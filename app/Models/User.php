@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
         'role',
@@ -43,37 +43,31 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function user()
+    public function sentConversations()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(Conversation::class, 'sender_id');
     }
 
-    public function parent() {
-        return $this->hasOne(Parents::class , "user_id");
+    public function receivedConversations()
+    {
+        return $this->hasMany(Conversation::class, 'receiver_id');
     }
 
-    public function student(){
-        return $this->hasOne(Students::class, "user_id");
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
     }
 
     public function teacher() {
-        return $this->hasOne(Teachers::class, "user_id");
+        return $this->hasOne(Teachers::class);
     }
 
-    public function enrollments()
-    {
-        return $this->hasMany(Enrollments::class);
+    public function student() {
+        return $this->hasOne(Students::class);
     }
 
-    public function courses()
-    {
-        return $this->hasManyThrough(Courses::class, Enrollments::class, 'student_id', 'id', 'id', 'course_id');
+    public function parent() {
+        return $this->hasOne(Parents::class);
     }
-
-    public function notifications()
-    {
-        return $this->hasMany(Notifications::class);
-    }
-
 
 }

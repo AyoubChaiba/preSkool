@@ -15,15 +15,14 @@
                 <div class="login-right">
                     <div class="login-right-wrap">
                         <h1>Welcome to Preskool</h1>
-                        <p class="account-subtitle">Need an account? <a href="{{ route('view.register') }}">Sign Up</a></p>
                         <h2>Sign in</h2>
 
                         <form id="login-form" action="{{ route('auth.login') }}" method="POST">
                             @csrf
                             <div class="mb-3">
                                 <div class="form-group mb-2">
-                                    <label>Username <span class="login-danger">*</span></label>
-                                    <input class="form-control" type="text" name="email" id="email">
+                                    <label>Email <span class="login-danger">*</span></label>
+                                    <input class="form-control" type="text" name="email" id="email" value="admin@admin.com">
                                     <span class="profile-views"><i class="fas fa-user-circle"></i></span>
                                 </div>
                                 <span class="error-message text-danger" id="email-error"></span>
@@ -31,7 +30,7 @@
                             <div class="mb-3">
                                 <div class="form-group mb-2">
                                     <label>Password <span class="login-danger">*</span></label>
-                                    <input class="form-control pass-input" type="password" name="password" id="password">
+                                    <input class="form-control pass-input" type="password" name="password" id="password" value="admin@admin.com">
                                     <span class="profile-views feather-eye toggle-password"></span>
                                 </div>
                                 <span class="error-message text-danger" id="password-error"></span>

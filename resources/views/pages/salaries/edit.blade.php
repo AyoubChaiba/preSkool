@@ -39,7 +39,7 @@
                                             <option value="">Select Teacher</option>
                                             @foreach($teachers as $teacher)
                                                 <option value="{{ $teacher->id }}" {{ $teacher->id == $salary->teacher_id ? 'selected' : '' }}>
-                                                    {{ $teacher->user->name }}
+                                                    {{ $teacher->name }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -54,7 +54,6 @@
                                             <option value="">Select Salary Status</option>
                                             <option value="paid" {{ $salary->status == 'paid' ? 'selected' : '' }}>Paid</option>
                                             <option value="pending" {{ $salary->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="overdue" {{ $salary->status == 'overdue' ? 'selected' : '' }}>Overdue</option>
                                         </select>
                                         <span class="text-danger error-text status_error"></span>
                                     </div>
@@ -71,7 +70,7 @@
                                 <div class="col-12 col-sm-6">
                                     <div class="form-group local-forms calendar-icon">
                                         <label>Payment Date <span class="login-danger">*</span></label>
-                                        <input class="form-control datetimepicker" type="text" name="payment_date" placeholder="DD-MM-YYYY" value="{{ $salary->payment_date->format('d-m-Y') }}">
+                                        <input class="form-control datetimepicker" type="text" name="payment_date" placeholder="DD-MM-YYYY" value="{{ $salary->payment_date }}">
                                         <span class="text-danger error-text payment_date_error"></span>
                                     </div>
                                 </div>

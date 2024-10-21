@@ -2,89 +2,125 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Courses;
+use App\Models\Classes;
+use App\Models\Exams;
+use App\Models\gradePoints;
 use App\Models\Grades;
 use App\Models\Students;
+use App\Models\Subjects;
 use Illuminate\Http\Request;
 
 class GradesController extends Controller
 {
-    /**
-     * Display a listing of the grades.
-     */
-    public function show($student_id, $course_id)
+    public function index($id)
     {
-        $grades = Grades::with('student', 'course')
-            ->where('student_id', $student_id)
-            ->where('course_id', $course_id)
-            ->get();
+        $class = Classes::findOrFail($id);
+        $exams = Exams::where('class_id', $id)->get();
+        $subjects = Subjects::where('class_id', $id)->get();
 
-        return view('pages.courses.students.grades.show', compact('grades'));
+        return view('pages.grades.index', compact('class', 'exams', 'subjects'));
     }
 
-    public function create($student_id, $course_id)
+    public function fetchStudents(Request $request)
     {
-        $student = Students::find($student_id);
-        $course = Courses::find($course_id);
+        $request->validate([
+            'exam_id' => 'required|exists:exams,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'class_id' => 'required|exists:classes,id',
+        ]);
 
-        return view('pages.courses.students.grades.create', compact('student', 'course'));
+        $students = Students::where('class_id', $request->class_id)->get();
+
+        $grades = Grades::where('exam_id', $request->exam_id)
+                        ->where('subject_id', $request->subject_id)
+                        ->where('class_id', $request->class_id)
+                        ->get()
+                        ->keyBy('student_id');
+
+        $subject = Subjects::find($request->subject_id);
+        $class = Classes::find($request->class_id);
+        $exam = Exams::find($request->exam_id);
+
+        if (!$subject || !$class) {
+            return response()->json(['error' => 'Subject or Class not found'], 404);
+        }
+
+        return response()->json([
+            'students' => $students,
+            'grades' => $grades,
+            'subject' => $subject,
+            'class' => $class,
+            'exam' => $exam,
+            'hasGrades' => $grades->isNotEmpty()
+        ]);
     }
 
-    /**
-     * Store a newly created grade in storage.
-     */
-    public function store(Request $request)
+
+
+    public function saveGrades(Request $request)
     {
-        $validatedData = $request->validate([
+        $request->validate([
+            'grades' => 'required|array',
+            'grades.*' => 'numeric|min:0|max:100',
+            'exam_id' => 'required|exists:exams,id',
+            'subject_id' => 'required|exists:subjects,id',
             'student_id' => 'required|exists:students,id',
-            'course_id' => 'required|exists:courses,id',
-            'grade' => 'required|numeric|min:0|max:100',
-            'grade_date' => 'required|date',
+            'class_id' => 'required|exists:classes,id',
         ]);
 
-        Grades::create($validatedData);
+        foreach ($request->grades as $studentId => $grade) {
+            Grades::updateOrCreate(
+                [
+                    'student_id' => $studentId,
+                    'subject_id' => $request->subject_id,
+                    'exam_id' => $request->exam_id,
+                    'class_id' => $request->class_id,
+                ],
+                ['grade' => $grade]
+            );
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Grade recorded successfully!',
-            'redirect_url' => route('courses.students', $request->course_id),
-        ], 201);
+        return response()->json(['message' => 'Grades saved successfully!']);
     }
 
-    public function edit($id)
+    public function getStudentGrades($studentId)
     {
-        $grade = Grades::findOrFail($id);
-        return view('pages.courses.students.grades.edit', compact('grade'));
+        $subjects = Subjects::all();
+
+        $student = Students::with(['grades.subject', 'grades.exam'])
+            ->where('id', $studentId)
+            ->first();
+
+        $studentGrades = $subjects->map(function ($subject) use ($student) {
+            $grades = $student->grades->where('subject_id', $subject->id);
+            $totalGrades = $grades->sum('grade');
+            $totalExams = $grades->count();
+            $averageGrade = $totalExams > 0 ? round($totalGrades / $totalExams, 2) : null;
+
+            $gradePoint = $averageGrade ? gradePoints::where('mark_from', '<=', $averageGrade)
+                                                    ->where('mark_upto', '>=', $averageGrade)
+                                                    ->first() : null;
+
+            $examDetails = $grades->map(function($grade) {
+                return [
+                    'exam_name' => $grade->exam->exam_name,
+                    'grade' => $grade->grade,
+                ];
+            });
+
+            return [
+                'subject' => $subject->subject_name,
+                'total_exams' => $totalExams,
+                'total_grade' => $totalGrades,
+                'average_grade' => $averageGrade ?? 'N/A',
+                'grade_name' => $gradePoint->grade_name ?? 'N/A',
+                'comment' => $gradePoint->comment ?? 'No grades yet',
+                'exam_details' => $examDetails,
+            ];
+        });
+
+        return view('pages.grades.student', compact('studentGrades'));
     }
 
-    /**
-     * Update the specified grade in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        $validatedData = $request->validate([
-            'grade_date' => 'required|date',
-            'grade' => 'required|numeric|min:0|max:100',
-        ]);
 
-        $grade = Grades::findOrFail($id);
-        $grade->update($validatedData);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Grade updated successfully!',
-            'redirect_url' => route('courses.students', $grade->course_id),
-        ], 200);
-    }
-
-    public function destroy($id)
-    {
-        $grade = Grades::findOrFail($id);
-        $grade->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Grade deleted successfully!',
-        ], 200);
-    }
 }

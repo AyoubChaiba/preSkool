@@ -11,16 +11,14 @@ class Salaries extends Model
 
     protected $fillable = [
         'teacher_id',
+        'status',
         'amount',
-        'payment_date',
-        'status'
+        'payment_date'
     ];
 
-    protected $casts = [
-        'payment_date' => 'datetime',
-    ];
 
     public function teacher(){
-        return $this->belongsTo(teachers::class);
+        return $this->belongsTo(Teachers::class);
     }
+
 }

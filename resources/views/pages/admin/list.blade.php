@@ -26,32 +26,6 @@
             </div>
         </div>
 
-        {{-- <div class="student-group-form">
-            <div class="row">
-                <div class="col-lg-3 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search by ID ..." id="search-id">
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search by Name ..." id="search-name">
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search by Phone ..." id="search-phone">
-                    </div>
-                </div>
-                <div class="col-lg-2">
-                    <div class="search-student-btn">
-                        <button type="button" id="search-button" class="btn btn-primary">Search</button>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
-
         <div class="row">
             <div class="col-sm-12">
                 <div class="card card-table comman-shadow">
@@ -69,7 +43,7 @@
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table border-0 star-student table-hover table-center mb-0 datatable table-striped">
+                            <table class="table border-0 star-student table-hover table-center mb-0 table-striped" id="admins">
                                 <thead class="student-thread">
                                     <tr>
                                         <th>ID</th>
@@ -85,10 +59,7 @@
                                             <td>{{ $admin->id }}</td>
                                             <td>
                                                 <h2 class="table-avatar">
-                                                    <a href="student-details.html" class="avatar avatar-sm me-2">
-                                                        <img class="avatar-img rounded-circle" src="{{ asset('assets/img/profiles/avatar-01.jpg') }}" alt="User Image">
-                                                    </a>
-                                                    <a href="student-details.html">{{ $admin->name }}</a>
+                                                    <a href="student-details.html">{{ $admin->username }}</a>
                                                 </h2>
                                             </td>
                                             <td>{{ $admin->email }}</td>
@@ -126,6 +97,7 @@
 
     <script>
     $(document).ready(function() {
+        $('#admins').DataTable();
         $('.btn-delete').click(function(e) {
             e.preventDefault();
 

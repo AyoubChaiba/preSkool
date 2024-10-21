@@ -17,7 +17,7 @@
                     <div class="page-sub-header">
                         <h3 class="page-title">Parents</h3>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('parent.index') }}"> Parents</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('parent.index') }}">Parents</a></li>
                             <li class="breadcrumb-item active">All Parents</li>
                         </ul>
                     </div>
@@ -25,30 +25,6 @@
             </div>
         </div>
 
-        {{-- <div class="student-group-form">
-            <div class="row">
-                <div class="col-lg-3 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search by ID ..." id="search-id">
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search by Name ..." id="search-name">
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search by Phone ..." id="search-phone">
-                    </div>
-                </div>
-                <div class="col-lg-2">
-                    <div class="search-student-btn">
-                        <button type="button" id="search-button" class="btn btn-primary">Search</button>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
 
         <div class="row">
             <div class="col-sm-12">
@@ -60,20 +36,27 @@
                                 <div class="col">
                                     <h3 class="page-title">Parents</h3>
                                 </div>
-                                <div class="col-auto text-end float-end ms-auto download-grp">
-                                    <a href="{{ route('parent.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
-                                </div>
+                                @can('viewAny', Auth::user())
+                                    <div class="col-auto text-end float-end ms-auto download-grp">
+                                        <a href="{{ route('parent.create') }}" class="btn btn-primary">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
+                                    </div>
+                                @endcan
                             </div>
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table border-0 star-student table-hover table-center mb-0 datatable table-striped">
+                            <table class="table border-0 star-student table-hover table-center mb-0 table-striped" id="parents">
                                 <thead class="student-thread">
                                     <tr>
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Email</th>
-                                        <th class="text-end">Action</th>
+                                        <th>Phone</th>
+                                        @can('viewAny',  Auth::user())
+                                            <th class="text-end">Action</th>
+                                        @endcan
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,39 +65,38 @@
                                             <td>{{ $parent->id }}</td>
                                             <td>
                                                 <h2 class="table-avatar">
-                                                    <a href="student-details.html" class="avatar avatar-sm me-2">
-                                                        <img class="avatar-img rounded-circle" src="{{ asset('assets/img/profiles/avatar-01.jpg') }}" alt="User Image">
-                                                    </a>
-                                                    <a href="student-details.html">{{ $parent->user->name }}</a>
+                                                    <a href="#">{{ $parent->name }}</a>
                                                 </h2>
                                             </td>
                                             <td>{{ $parent->user->email }}</td>
-                                            <td class="text-end">
-                                                <div class="actions">
-                                                    <a href="{{ route('parent.edit', $parent->id) }}" class="btn btn-sm bg-danger-light me-2">
-                                                        <i class="feather-edit"></i>
-                                                    </a>
-                                                    <form action="{{ route('parent.destroy', $parent->id) }}" method="POST" style="display: inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm bg-danger-light btn-delete me-2" aria-label="Delete">
-                                                            <i class="feather-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                    <button type="button" class="btn btn-sm bg-info-light btn-send-message" data-parent-id="{{ $parent->user->id }}">
-                                                        <i class="feather-send"></i> Send Message
-                                                    </button>
-                                                </div>
-                                            </td>
+                                            <td>{{ $parent->phone_number }}</td>
+                                            @can('viewAny', Auth::user())
+                                                <td class="text-end">
+                                                    <div class="actions">
+                                                        <a href="{{ route('parent.edit', $parent->id) }}" class="btn btn-sm bg-danger-light me-2">
+                                                            <i class="feather-edit"></i>
+                                                        </a>
+                                                        <form action="{{ route('parent.destroy', $parent->id) }}" method="POST" style="display: inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm bg-danger-light btn-delete me-2" aria-label="Delete">
+                                                                <i class="feather-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            @endcan
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 
 @endsection
@@ -125,6 +107,7 @@
 
     <script>
     $(document).ready(function() {
+        $('#parents').DataTable();
         $('.btn-delete').click(function(e) {
             e.preventDefault();
 
@@ -159,7 +142,7 @@
                         error: function(error) {
                             Swal.fire({
                                 title: 'Error!',
-                                text: 'Error deleting user.',
+                                text: 'Error deleting parent.',
                                 icon: 'error',
                                 confirmButtonText: 'OK'
                             });
@@ -167,52 +150,6 @@
                     });
                 }
             });
-        });
-
-        $('.btn-send-message').click(function(e) {
-            e.preventDefault();
-            const parentId = $(this).data('parent-id');
-
-            Swal.fire({
-                title: 'Send Message',
-                input: 'textarea',
-                inputLabel: 'Message',
-                inputPlaceholder: 'Type your message here...',
-                showCancelButton: true,
-                confirmButtonText: 'Send',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const message = result.value;
-
-                    $.ajax({
-                        url: '{{ route('message.send') }}',
-                        type: 'POST',
-                        data: {
-                            receiver_id: parentId,
-                            content: message,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            Swal.fire('Sent!', 'Message sent successfully!', 'success');
-                        },
-                        error: function(error) {
-                            Swal.fire('Error!', 'Failed to send the message.', 'error');
-                        }
-                    });
-                }
-            });
-        });
-
-
-        $('#search-button').click(function(e) {
-            e.preventDefault();
-
-            const searchData = {
-                id: $('#search-id').val(),
-                name: $('#search-name').val(),
-                phone: $('#search-phone').val(),
-            };
         });
     });
     </script>
